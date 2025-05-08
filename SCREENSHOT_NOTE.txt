@@ -1,0 +1,9 @@
+IMPORTANT: 
+
+To complete the README, please take a screenshot of the application and save it as "screenshot.png" in the root directory.
+
+The screenshot should show the main Playground tab with some text in the input field and the voice parameters visible.
+
+This will make the README more visually appealing and help users understand what the application looks like.
+
+After taking the screenshot, you can delete this note file.

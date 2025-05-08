@@ -1,0 +1,47 @@
+{
+  "name": "elevenlabs-gui-studio",
+  "version": "1.0.0",
+  "description": "A desktop GUI application for ElevenLabs API",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sannidhya Sah",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SannidhyaSah/ElevenLabs-GUI-Studio-.git"
+  },
+  "homepage": "https://github.com/SannidhyaSah/ElevenLabs-GUI-Studio-",
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "elevenlabs": "^1.57.0",
+    "express": "^4.18.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "wavesurfer.js": "^7.9.5"
+  },
+  "devDependencies": {
+    "electron": "^29.0.1",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.elevenlabs.gui",
+    "productName": "ElevenLabs GUI Studio",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

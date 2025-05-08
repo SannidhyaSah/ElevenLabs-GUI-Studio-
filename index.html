@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElevenLabs GUI Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>ElevenLabs GUI Studio</h1>
+      <div class="current-api-status" id="current-api-status">
+        <span class="status-indicator"></span>
+        <span class="status-text">No API key in use</span>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="text-to-speech">Playground</button>
+      <button class="tab-button" data-tab="voice-management">Voice Management</button>
+      <button class="tab-button" data-tab="history">History</button>
+      <button class="tab-button" data-tab="tips">Tips & Tricks</button>
+      <button class="tab-button" data-tab="settings">Settings</button>
+      <button class="tab-button" data-tab="about">About</button>
+    </div>
+
+    <div class="tab-content">
+      <!-- Playground Tab -->
+      <div class="tab-pane active" id="text-to-speech">
+        <div class="tts-container">
+          <div class="tts-controls">
+            <div class="control-group">
+              <label for="voice-select">Voice:</label>
+              <div class="select-with-action">
+                <select id="voice-select">
+                  <option value="">Loading voices...</option>
+                </select>
+                <button id="refresh-voices-select-btn" class="small-action-btn" title="Refresh Voices">
+                  <i class="refresh-icon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label for="model-select">Model:</label>
+              <div class="select-with-action">
+                <select id="model-select">
+                  <option value="">Loading models...</option>
+                </select>
+                <button id="refresh-models-btn" class="small-action-btn" title="Refresh Models">
+                  <i class="refresh-icon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="voice-parameters">
+              <div class="parameters-header">
+                <h3>Voice Parameters</h3>
+                <div class="button-group">
+                  <button id="test-settings-btn" class="small-btn" title="Test current settings">Test Settings</button>
+                  <button id="reset-settings-btn" class="small-btn" title="Reset to default settings">Reset Settings</button>
+                </div>
+              </div>
+
+              <div class="slider-control">
+                <label for="stability-slider">Stability:</label>
+                <div class="slider-control-container">
+                  <input type="range" id="stability-slider" min="0" max="1" step="0.01" value="0.5">
+                  <span class="slider-value" id="stability-value">0.5</span>
+                </div>
+              </div>
+
+              <div class="slider-control">
+                <label for="similarity-slider">Similarity:</label>
+                <div class="slider-control-container">
+                  <input type="range" id="similarity-slider" min="0" max="1" step="0.01" value="0.75">
+                  <span class="slider-value" id="similarity-value">0.75</span>
+                </div>
+              </div>
+
+              <div class="slider-control">
+                <label for="style-slider">Style Exaggeration:</label>
+                <div class="slider-control-container">
+                  <input type="range" id="style-slider" min="0" max="1" step="0.01" value="0.5">
+                  <span class="slider-value" id="style-value">0.5</span>
+                </div>
+              </div>
+
+              <div class="slider-control">
+                <label for="speed-slider">Speed:</label>
+                <div class="slider-control-container">
+                  <input type="range" id="speed-slider" min="0.5" max="2.0" step="0.01" value="1.0">
+                  <span class="slider-value" id="speed-value">1.0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tts-input">
+            <div class="text-input-container">
+              <textarea id="text-input" placeholder="Enter text to convert to speech..."></textarea>
+
+              <div class="text-tools">
+                <div class="break-tool">
+                  <label for="break-duration">Add Pause:</label>
+                  <div class="break-input-group">
+                    <input type="number" id="break-duration" min="0.1" max="10" step="0.1" value="1.0" class="break-duration-input">
+                    <span class="break-unit">s</span>
+                    <button id="add-break-btn" class="icon-btn" title="Insert pause break">
+                      <i class="plus-icon"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tts-actions">
+              <button id="new-btn" class="icon-btn" title="New Generation"><i class="plus-icon"></i>New</button>
+              <button id="generate-btn">Generate Speech</button>
+              <button id="play-btn" disabled>Play</button>
+              <button id="save-btn" disabled>Save Audio</button>
+            </div>
+
+            <div class="audio-player">
+              <audio id="audio-player" controls></audio>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Voice Management Tab -->
+      <div class="tab-pane" id="voice-management">
+        <div class="voice-management-container">
+          <h2>Voice Management</h2>
+          <p>Manage your ElevenLabs voices</p>
+
+          <div class="voice-list" id="voice-list">
+            <p>Loading voices...</p>
+          </div>
+
+          <div class="voice-actions">
+            <button id="add-voice-btn">Add New Voice</button>
+            <button id="refresh-voices-btn">Refresh Voices</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Tab -->
+      <div class="tab-pane" id="history">
+        <div class="history-container">
+          <h2>Generation History</h2>
+          <p>Your recent text-to-speech generations</p>
+
+          <div class="history-actions">
+            <button id="clear-history-btn">Clear History</button>
+          </div>
+
+          <div class="history-list" id="history-list">
+            <p>No history available</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips & Tricks Tab -->
+      <div class="tab-pane" id="tips">
+        <div class="tips-container">
+          <h2>Tips & Tricks</h2>
+
+          <div class="tip-section">
+            <h3>Text Optimization</h3>
+            <ul>
+              <li><strong>Proper Grammar:</strong> Use correct punctuation and grammar for natural-sounding speech.</li>
+              <li><strong>Formatting for Pauses:</strong> Use commas, periods, and line breaks to control pacing.</li>
+              <li><strong>Guiding Emotion/Tone:</strong> Add context like [happily] or [sadly] to guide the emotional tone.</li>
+              <li><strong>Controlling Pronunciation:</strong> Use phonetic spelling for difficult words or names.</li>
+            </ul>
+          </div>
+
+          <div class="tip-section">
+            <h3>Voice Parameter Tips</h3>
+            <ul>
+              <li><strong>Stability:</strong> Higher values make the voice more consistent but less expressive.</li>
+              <li><strong>Similarity:</strong> Higher values make the voice sound more like the original sample.</li>
+              <li><strong>Style:</strong> Higher values exaggerate the style and emotion of the voice.</li>
+              <li><strong>Speed:</strong> Adjust to make the speech faster or slower.</li>
+            </ul>
+          </div>
+
+          <div class="tip-section">
+            <h3>Best Practices</h3>
+            <ul>
+              <li>Test short samples before generating long content.</li>
+              <li>Different voices work better with different models.</li>
+              <li>For long texts, break into smaller paragraphs.</li>
+              <li>Save your favorite parameter combinations for consistency.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-pane" id="settings">
+        <div class="settings-container">
+          <h2>Settings</h2>
+          <p>Configure your application settings</p>
+
+          <div class="settings-section">
+            <h3>API Key Management</h3>
+            <p>Manage your ElevenLabs API keys</p>
+
+            <div class="api-key-container">
+              <div class="api-key-input-group">
+                <label for="api-key-input">API Key</label>
+                <input type="password" id="api-key-input" placeholder="Enter your ElevenLabs API Key">
+                <label for="api-key-name-input">Key Name</label>
+                <input type="text" id="api-key-name-input" placeholder="API Key Name">
+                <button id="save-api-key">Save API Key</button>
+              </div>
+
+              <div class="api-key-select-group">
+                <label for="api-key-select">Saved API Keys</label>
+                <select id="api-key-select">
+                  <option value="">Select a saved API key</option>
+                </select>
+                <div class="api-key-actions">
+                  <button id="use-api-key">Use Selected</button>
+                  <button id="delete-api-key">Delete Selected</button>
+                </div>
+              </div>
+
+              <div class="api-key-status" id="api-key-status">No API key in use</div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3>Application Settings</h3>
+            <p>Additional settings will appear here in future updates</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- About Tab -->
+      <div class="tab-pane" id="about">
+        <div class="about-container">
+          <h2>About ElevenLabs GUI Studio</h2>
+          <p>A desktop application for interacting with the ElevenLabs API.</p>
+
+          <div class="about-info">
+            <p><strong>Version:</strong> 1.0.0</p>
+            <p><strong>Created by:</strong> <a href="https://github.com/SannidhyaSah" target="_blank">@SannidhyaSah</a></p>
+            <p><strong>ElevenLabs API:</strong> <a href="https://elevenlabs.io/docs" target="_blank">Documentation</a></p>
+          </div>
+
+          <div class="disclaimer">
+            <p>This is an unofficial application and is not affiliated with ElevenLabs.</p>
+            <p>You must have a valid ElevenLabs API key to use this application.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
