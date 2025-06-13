@@ -1,19 +1,31 @@
-# ElevenLabs GUI Studio
+# ElevenLabs GUI Studio v2.0
 
-A professional desktop GUI application for interacting with the ElevenLabs API. This application allows you to use ElevenLabs' text-to-speech capabilities directly from your desktop, with a clean and intuitive interface.
+A modern, user-friendly desktop application for interacting with the ElevenLabs text-to-speech API.
 
-![ElevenLabs GUI Studio Screenshot](screenshot.png)
+![ElevenLabs GUI Studio Screenshot](assets/screenshot.png)
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 
 ## Features
 
-- **Playground**: Convert text to speech using ElevenLabs' advanced AI voices (formerly Text to Speech tab)
-- **Voice Management**: View and manage your ElevenLabs voices
-- **API Key Management**: Save and manage multiple named API keys securely in a data folder
-- **Voice Parameter Controls**: Adjust Speed, Stability, Similarity, and Style Exaggeration with visual sliders
-- **Test Settings**: Test your voice settings with a sample text to hear the differences
-- **Break Tags**: Easily insert SSML break tags with customizable duration
-- **History Tracking**: Keep track of your previous generations with option to delete individual items or clear all history
-- **Tips and Tricks**: Best practices for getting the most out of ElevenLabs
+### Core Features
+- **Playground**: Convert text to speech using ElevenLabs' advanced AI voices
+- **Voice Cloning** (NEW v2.0): Create custom voice clones by uploading audio samples
+- **Voice Management**: Browse, manage, and organize your voice library
+- **Voice Library** (NEW v2.0): Access and search through available voices
+- **API Key Management**: Save and manage multiple named API keys securely
+- **Voice Parameter Controls**: Fine-tune voice output with visual sliders:
+  - Speed (0.5-2.0)
+  - Stability (0-1)
+  - Similarity Boost (0-1)
+  - Style Exaggeration (0-1)
+- **Preset Management** (NEW v2.0): Save and load custom voice parameter combinations
+- **Test Settings**: Preview voice settings with sample text
+- **Break Tags**: Insert SSML break tags for natural pauses
+- **History Tracking**: Review and replay previous generations
+- **Tips and Tricks**: Best practices guide for optimal results
 
 ## Requirements
 
@@ -83,12 +95,47 @@ This will create distributable packages in the `dist` directory.
 8. Click "Save Audio" to save the audio file to your computer
 9. Click the "New" button to start a fresh generation
 
+### Using Presets (New in v2.0)
+
+1. Select a preset from the dropdown to instantly apply voice settings:
+   - **Balanced**: Default settings for general use
+   - **Expressive**: Lower stability for emotional range
+   - **Stable**: High stability for consistent narration
+   - **Fast Speech**: 1.5x speed for quick delivery
+   - **Slow & Clear**: 0.8x speed for clarity
+2. To save current settings as a preset:
+   - Adjust parameters to your liking
+   - Enter a name in "Save as..." field
+   - Click the save icon
+3. To delete a preset:
+   - Select it from the dropdown
+   - Click the delete icon
+
 ### Testing Voice Settings
 
 1. Adjust the voice parameters (Stability, Similarity, Style, Speed) using the sliders
 2. Click the "Test Settings" button to generate a sample audio with current settings
 3. Listen to the audio to hear how your settings affect the voice
 4. Click "Reset Settings" to return to default values if needed
+
+### Voice Cloning (New in v2.0)
+
+1. Navigate to the Voice Management tab
+2. Click on "Clone Voice" sub-tab
+3. Enter a name for your voice clone
+4. Add an optional description
+5. Upload audio samples by:
+   - Clicking the upload area to browse files
+   - Dragging and dropping audio files
+6. Add optional labels (e.g., "accent:british, age:middle")
+7. Click "Create Voice Clone" to generate your custom voice
+8. Your cloned voice will appear in the voice selection dropdown
+
+**Tips for Voice Cloning:**
+- Use clear, high-quality audio samples
+- Provide multiple samples for better results
+- Ensure minimal background noise
+- Samples should be between 30 seconds to 3 minutes
 
 ### Managing History
 
@@ -137,6 +184,34 @@ Created by [@SannidhyaSah](https://github.com/SannidhyaSah)
 ## Disclaimer
 
 This is an unofficial application and is not affiliated with ElevenLabs. You must have a valid ElevenLabs API key to use this application. All API usage is subject to ElevenLabs' terms of service.
+
+## Changelog
+
+### Version 2.0.0 (2025)
+- **Voice Cloning Feature**: Added complete voice cloning functionality
+  - Upload multiple audio samples
+  - Create custom voice clones
+  - Manage voice labels and descriptions
+- **Preset Management System**: Save and load voice parameter combinations
+  - Default presets included (Balanced, Expressive, Stable, Fast Speech, Slow & Clear)
+  - Create custom presets
+  - Delete unwanted presets
+- **Voice Library Integration**: Browse and search available voices
+- **Major UI Overhaul**: Complete redesign with modern dark theme
+- **Performance Optimization**: Removed heavy effects for smoother operation
+- **Improved Visibility**: Enhanced slider tracks and controls
+- **Better Spacing**: Fixed button overlaps and improved layout
+- **Color Scheme Update**: Changed from purple to professional gray (#23272e)
+- **Notification System**: Reduced duration to 1 second for better UX
+- **Preset Management**: Improved preset selector to prevent overflow
+- **Responsive Design**: Better adaptation to different screen sizes
+
+### Version 1.0.0 (Initial Release)
+- Basic text-to-speech functionality
+- Voice and model selection
+- Parameter controls
+- History tracking
+- API key management
 
 ## License
 

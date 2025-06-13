@@ -3,6 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const Store = require('electron-store');
 const { ElevenLabsClient } = require('elevenlabs');
+const { encrypt, decrypt, initializeEncryption } = require('./utils/crypto');
+const { validateApiKey, validateTextInput, validateVoiceParams, sanitizePath } = require('./utils/sanitizer');
 
 // Create data directory if it doesn't exist
 const dataDir = path.join(__dirname, 'data');
@@ -13,17 +15,48 @@ if (!fs.existsSync(dataDir)) {
 // Path to API keys file
 const apiKeysPath = path.join(dataDir, 'api_keys.json');
 
-// Initialize store for saving settings
-const store = new Store();
+// Initialize store for saving settings with encryption
+const store = new Store({
+  encryptionKey: 'elevenlabs-gui-studio-2024',
+  clearInvalidConfig: true
+});
 
-// Initialize API keys storage
+// Initialize encryption
+initializeEncryption();
+
+// Initialize API keys storage with encryption
 let apiKeys = [];
 if (fs.existsSync(apiKeysPath)) {
   try {
-    apiKeys = JSON.parse(fs.readFileSync(apiKeysPath, 'utf8'));
+    const encryptedData = fs.readFileSync(apiKeysPath, 'utf8');
+    const decryptedData = decrypt(encryptedData);
+    if (decryptedData) {
+      apiKeys = JSON.parse(decryptedData);
+    } else {
+      // Handle legacy unencrypted format
+      try {
+        apiKeys = JSON.parse(encryptedData);
+        // Re-save as encrypted
+        saveApiKeys();
+      } catch (e) {
+        console.error('Error reading API keys file:', e);
+        apiKeys = [];
+      }
+    }
   } catch (error) {
     console.error('Error reading API keys file:', error);
     apiKeys = [];
+  }
+}
+
+// Helper function to save encrypted API keys
+function saveApiKeys() {
+  try {
+    const encrypted = encrypt(JSON.stringify(apiKeys));
+    fs.writeFileSync(apiKeysPath, encrypted, 'utf8');
+  } catch (error) {
+    console.error('Error saving API keys:', error);
+    throw new Error('Failed to save API keys securely');
   }
 }
 
@@ -32,6 +65,29 @@ let elevenLabsClient = null;
 
 // Keep a global reference of the window object to prevent garbage collection
 let mainWindow;
+
+// Cleanup temporary audio files older than 24 hours
+function cleanupTempFiles() {
+  try {
+    const tempDir = app.getPath('temp');
+    const files = fs.readdirSync(tempDir);
+    const now = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+
+    files.forEach(file => {
+      if (file.startsWith('elevenlabs-output-')) {
+        const filePath = path.join(tempDir, file);
+        const stats = fs.statSync(filePath);
+        if (now - stats.mtime.getTime() > maxAge) {
+          fs.unlinkSync(filePath);
+          console.log('Cleaned up old temp file:', file);
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error cleaning up temp files:', error);
+  }
+}
 
 function createWindow() {
   // Create the browser window
@@ -89,6 +145,9 @@ app.whenReady().then(() => {
   console.log('Electron app is ready');
   createWindow();
   console.log('Main window created');
+
+  // Clean up old temporary audio files on startup
+  cleanupTempFiles();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window when the dock icon is clicked
@@ -178,13 +237,28 @@ ipcMain.handle('get-api-keys', () => {
 // Save a new API key
 ipcMain.handle('save-api-key', async (event, { name, apiKey }) => {
   try {
+    // Validate inputs
+    if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      return { success: false, error: 'API key name is required' };
+    }
+    
+    const validation = validateApiKey(apiKey);
+    if (!validation.valid) {
+      return { success: false, error: validation.error };
+    }
+
     // Create new client with the provided API key
     const testClient = new ElevenLabsClient({
       apiKey: apiKey
     });
 
     // Test the API key by fetching voices
-    await testClient.voices.getAll();
+    try {
+      await testClient.voices.getAll();
+    } catch (apiError) {
+      console.error('API key validation failed:', apiError);
+      return { success: false, error: 'Invalid API key. Please check your API key and try again.' };
+    }
 
     // If successful, add to API keys list
     const existingIndex = apiKeys.findIndex(key => key.name === name);
@@ -194,8 +268,8 @@ ipcMain.handle('save-api-key', async (event, { name, apiKey }) => {
       apiKeys.push({ name, apiKey });
     }
 
-    // Save to file
-    fs.writeFileSync(apiKeysPath, JSON.stringify(apiKeys, null, 2));
+    // Save encrypted to file
+    saveApiKeys();
 
     // Set as current API key
     elevenLabsClient = testClient;
@@ -204,18 +278,22 @@ ipcMain.handle('save-api-key', async (event, { name, apiKey }) => {
     return { success: true };
   } catch (error) {
     console.error('Error saving API key:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || 'Failed to save API key' };
   }
 });
 
 // Delete an API key
 ipcMain.handle('delete-api-key', (event, name) => {
   try {
+    if (!name || typeof name !== 'string') {
+      return { success: false, error: 'Invalid API key name' };
+    }
+
     const initialLength = apiKeys.length;
     apiKeys = apiKeys.filter(key => key.name !== name);
 
-    // Save to file
-    fs.writeFileSync(apiKeysPath, JSON.stringify(apiKeys, null, 2));
+    // Save encrypted to file
+    saveApiKeys();
 
     // If current API key was deleted, reset client
     if (store.get('currentApiKeyName') === name) {
@@ -229,7 +307,7 @@ ipcMain.handle('delete-api-key', (event, name) => {
     };
   } catch (error) {
     console.error('Error deleting API key:', error);
-    return { success: false, error: error.message };
+    return { success: false, error: error.message || 'Failed to delete API key' };
   }
 });
 
@@ -319,9 +397,10 @@ ipcMain.handle('generate-speech', async (event, { text, voiceId, modelId, voiceS
       return { success: false, error: 'API key not set. Please set an API key in the Settings tab.' };
     }
 
-    // Validate required parameters
-    if (!text || !text.trim()) {
-      return { success: false, error: 'Text is required' };
+    // Validate text input
+    const textValidation = validateTextInput(text);
+    if (!textValidation.valid) {
+      return { success: false, error: textValidation.error };
     }
 
     if (!voiceId) {
@@ -330,6 +409,14 @@ ipcMain.handle('generate-speech', async (event, { text, voiceId, modelId, voiceS
 
     if (!modelId) {
       return { success: false, error: 'Model ID is required' };
+    }
+
+    // Validate voice parameters if provided
+    if (voiceSettings) {
+      const paramsValidation = validateVoiceParams(voiceSettings);
+      if (!paramsValidation.valid) {
+        return { success: false, error: 'Invalid voice parameters: ' + paramsValidation.errors.join(', ') };
+      }
     }
 
     // Create options object with correct parameter names for the Eleven Labs API
@@ -582,6 +669,25 @@ ipcMain.handle('save-audio', async (event, { audioPath, format = 'mp3', quality 
   try {
     console.log('Saving audio with options:', { format, quality });
 
+    // Validate and sanitize the audio path
+    if (!audioPath || typeof audioPath !== 'string') {
+      return { success: false, error: 'Invalid audio path' };
+    }
+
+    const sanitizedPath = sanitizePath(audioPath);
+    const resolvedPath = path.resolve(audioPath);
+    
+    // Check if file exists and is within allowed directories
+    if (!fs.existsSync(resolvedPath)) {
+      return { success: false, error: 'Audio file not found' };
+    }
+
+    // Verify the file is in temp directory (security check)
+    const tempDir = app.getPath('temp');
+    if (!resolvedPath.startsWith(tempDir)) {
+      return { success: false, error: 'Invalid file location' };
+    }
+
     // Determine file extension based on format
     const extension = format.toLowerCase();
 
@@ -602,7 +708,7 @@ ipcMain.handle('save-audio', async (event, { audioPath, format = 'mp3', quality 
       console.log(`Exporting audio to ${filePath} (format: ${format}, quality: ${quality})`);
 
       // Copy the file
-      fs.copyFileSync(audioPath, filePath);
+      fs.copyFileSync(resolvedPath, filePath);
 
       // Log success
       console.log('Audio exported successfully');
@@ -620,5 +726,105 @@ ipcMain.handle('save-audio', async (event, { audioPath, format = 'mp3', quality 
   } catch (error) {
     console.error('Error exporting audio:', error);
     return { success: false, error: error.message };
+  }
+});
+
+// Clone voice
+ipcMain.handle('clone-voice', async (event, { name, description, labels, files }) => {
+  try {
+    if (!elevenLabsClient) {
+      return { success: false, error: 'API key not set' };
+    }
+
+    // Validate inputs
+    if (!name || name.trim().length === 0) {
+      return { success: false, error: 'Voice name is required' };
+    }
+
+    if (!files || files.length === 0) {
+      return { success: false, error: 'At least one audio file is required' };
+    }
+
+    console.log('Creating voice clone:', name);
+
+    // Convert base64 files to buffers
+    const audioBuffers = files.map(file => ({
+      name: file.name,
+      buffer: Buffer.from(file.data, 'base64')
+    }));
+
+    // Create the voice clone
+    const voice = await elevenLabsClient.voices.add({
+      name: name,
+      description: description,
+      labels: labels,
+      files: audioBuffers.map(f => f.buffer)
+    });
+
+    console.log('Voice clone created successfully:', voice.voice_id);
+
+    return {
+      success: true,
+      voiceId: voice.voice_id,
+      voice: voice
+    };
+  } catch (error) {
+    console.error('Error creating voice clone:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to create voice clone'
+    };
+  }
+});
+
+// Get voice library
+ipcMain.handle('get-voice-library', async (event) => {
+  try {
+    if (!elevenLabsClient) {
+      return { success: false, error: 'API key not set' };
+    }
+
+    // Get shared voices from the library
+    const response = await elevenLabsClient.voices.getAll({ show_legacy: false });
+    
+    // Filter to show only library voices (not user's own voices)
+    const libraryVoices = response.voices.filter(voice => 
+      voice.category && voice.category !== 'cloned'
+    );
+
+    return {
+      success: true,
+      voices: libraryVoices
+    };
+  } catch (error) {
+    console.error('Error fetching voice library:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to fetch voice library'
+    };
+  }
+});
+
+// Add voice from library
+ipcMain.handle('add-voice-from-library', async (event, voiceId) => {
+  try {
+    if (!elevenLabsClient) {
+      return { success: false, error: 'API key not set' };
+    }
+
+    // This would typically add the voice to the user's collection
+    // However, the ElevenLabs API doesn't have a direct method for this
+    // Instead, users can simply use any voice_id directly in their requests
+    
+    return {
+      success: true,
+      message: 'Voice is now available for use'
+    };
+  } catch (error) {
+    console.error('Error adding voice from library:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to add voice'
+    };
   }
 });

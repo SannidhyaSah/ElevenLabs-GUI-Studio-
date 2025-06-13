@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ElevenLabs GUI Studio</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-optimized.css">
 </head>
 <body>
   <div class="app-container">
@@ -62,6 +62,24 @@
                   <button id="reset-settings-btn" class="small-btn" title="Reset to default settings">Reset Settings</button>
                 </div>
               </div>
+              
+              <div class="preset-bar">
+                <div class="preset-selector">
+                  <label>Preset:</label>
+                  <select id="preset-select">
+                    <option value="">Select preset...</option>
+                  </select>
+                  <button id="delete-preset-btn" class="icon-btn" title="Delete selected preset">
+                    <i class="delete-icon"></i>
+                  </button>
+                </div>
+                <div class="preset-save">
+                  <input type="text" id="preset-name-input" placeholder="Save as...">
+                  <button id="save-preset-btn" class="icon-btn" title="Save current settings">
+                    <i class="save-icon"></i>
+                  </button>
+                </div>
+              </div>
 
               <div class="slider-control">
                 <label for="stability-slider">Stability:</label>
@@ -117,7 +135,7 @@
 
             <div class="tts-actions">
               <button id="new-btn" class="icon-btn" title="New Generation"><i class="plus-icon"></i>New</button>
-              <button id="generate-btn">Generate Speech</button>
+              <button id="generate-btn" class="btn-primary">Generate Speech</button>
               <button id="play-btn" disabled>Play</button>
               <button id="save-btn" disabled>Save Audio</button>
             </div>
@@ -135,15 +153,72 @@
       <div class="tab-pane" id="voice-management">
         <div class="voice-management-container">
           <h2>Voice Management</h2>
-          <p>Manage your ElevenLabs voices</p>
+          <p>Manage your ElevenLabs voices and create voice clones</p>
 
-          <div class="voice-list" id="voice-list">
-            <p>Loading voices...</p>
+          <div class="voice-tabs">
+            <button class="voice-tab-btn active" data-voice-tab="my-voices">My Voices</button>
+            <button class="voice-tab-btn" data-voice-tab="clone-voice">Clone Voice</button>
+            <button class="voice-tab-btn" data-voice-tab="voice-library">Voice Library</button>
           </div>
 
-          <div class="voice-actions">
-            <button id="add-voice-btn">Add New Voice</button>
-            <button id="refresh-voices-btn">Refresh Voices</button>
+          <!-- My Voices Tab -->
+          <div class="voice-tab-content active" id="my-voices">
+            <div class="voice-list" id="voice-list">
+              <p>Loading voices...</p>
+            </div>
+            <div class="voice-actions">
+              <button id="refresh-voices-btn">Refresh Voices</button>
+            </div>
+          </div>
+
+          <!-- Clone Voice Tab -->
+          <div class="voice-tab-content" id="clone-voice">
+            <div class="clone-voice-form">
+              <h3>Create Voice Clone</h3>
+              <p class="clone-info">Upload audio samples to create a custom voice clone. For best results, use clear recordings with minimal background noise.</p>
+              
+              <div class="form-group">
+                <label for="clone-voice-name">Voice Name:</label>
+                <input type="text" id="clone-voice-name" placeholder="Enter a name for your voice clone">
+              </div>
+
+              <div class="form-group">
+                <label for="clone-voice-description">Description (optional):</label>
+                <textarea id="clone-voice-description" placeholder="Describe the voice characteristics"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Audio Samples:</label>
+                <div class="file-upload-area" id="clone-file-upload">
+                  <p>Drag and drop audio files here or click to browse</p>
+                  <input type="file" id="clone-audio-input" multiple accept="audio/*" style="display: none;">
+                </div>
+                <div id="clone-file-list" class="file-list"></div>
+              </div>
+
+              <div class="form-group">
+                <label for="clone-voice-labels">Labels (optional):</label>
+                <input type="text" id="clone-voice-labels" placeholder="e.g., accent:british, age:middle, gender:female">
+              </div>
+
+              <button id="create-clone-btn" class="primary-btn">Create Voice Clone</button>
+            </div>
+          </div>
+
+          <!-- Voice Library Tab -->
+          <div class="voice-tab-content" id="voice-library">
+            <div class="library-filters">
+              <input type="text" id="library-search" placeholder="Search voices...">
+              <select id="library-filter-category">
+                <option value="">All Categories</option>
+                <option value="narration">Narration</option>
+                <option value="characters">Characters</option>
+                <option value="conversational">Conversational</option>
+              </select>
+            </div>
+            <div class="library-voices" id="library-voices">
+              <p>Loading voice library...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -249,7 +324,7 @@
           <p>A desktop application for interacting with the ElevenLabs API.</p>
 
           <div class="about-info">
-            <p><strong>Version:</strong> 1.0.0</p>
+            <p><strong>Version:</strong> 2.0.0</p>
             <p><strong>Created by:</strong> <a href="https://github.com/SannidhyaSah" target="_blank">@SannidhyaSah</a></p>
             <p><strong>ElevenLabs API:</strong> <a href="https://elevenlabs.io/docs" target="_blank">Documentation</a></p>
           </div>

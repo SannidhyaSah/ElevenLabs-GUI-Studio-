@@ -1,3 +1,12 @@
+// HTML escape function to prevent XSS attacks
+function escapeHtml(unsafe) {
+  if (typeof unsafe !== 'string') return '';
+  
+  const div = document.createElement('div');
+  div.textContent = unsafe;
+  return div.innerHTML;
+}
+
 // DOM Elements
 const apiKeyInput = document.getElementById('api-key-input');
 const apiKeyNameInput = document.getElementById('api-key-name-input');
@@ -29,6 +38,20 @@ const refreshVoicesSelectBtn = document.getElementById('refresh-voices-select-bt
 const refreshModelsBtn = document.getElementById('refresh-models-btn');
 const clearHistoryBtn = document.getElementById('clear-history-btn');
 
+// Voice cloning elements
+const voiceTabBtns = document.querySelectorAll('.voice-tab-btn');
+const voiceTabContents = document.querySelectorAll('.voice-tab-content');
+const cloneVoiceName = document.getElementById('clone-voice-name');
+const cloneVoiceDescription = document.getElementById('clone-voice-description');
+const cloneFileUpload = document.getElementById('clone-file-upload');
+const cloneAudioInput = document.getElementById('clone-audio-input');
+const cloneFileList = document.getElementById('clone-file-list');
+const cloneVoiceLabels = document.getElementById('clone-voice-labels');
+const createCloneBtn = document.getElementById('create-clone-btn');
+const librarySearch = document.getElementById('library-search');
+const libraryFilterCategory = document.getElementById('library-filter-category');
+const libraryVoices = document.getElementById('library-voices');
+
 // Sliders
 const stabilitySlider = document.getElementById('stability-slider');
 const similaritySlider = document.getElementById('similarity-slider');
@@ -39,11 +62,238 @@ const similarityValue = document.getElementById('similarity-value');
 const styleValue = document.getElementById('style-value');
 const speedValue = document.getElementById('speed-value');
 
+// Preset elements
+const presetSelect = document.getElementById('preset-select');
+const presetNameInput = document.getElementById('preset-name-input');
+const savePresetBtn = document.getElementById('save-preset-btn');
+const deletePresetBtn = document.getElementById('delete-preset-btn');
+
 // State
 let currentAudioPath = null;
 let voices = [];
 let models = [];
 let history = JSON.parse(localStorage.getItem('history') || '[]');
+
+// Settings management
+const SETTINGS_KEY = 'elevenlabs-gui-settings';
+let settings = loadSettings();
+
+function loadSettings() {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error('Error loading settings:', error);
+  }
+  
+  // Return default settings
+  return {
+    voiceSettings: {
+      stability: 0.5,
+      similarity_boost: 0.75,
+      style: 0,
+      speed: 1.0
+    },
+    lastVoiceId: null,
+    lastModelId: null,
+    breakDuration: 1.5,
+    theme: 'dark',
+    autoPlay: true,
+    presets: []
+  };
+}
+
+function saveSettings() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch (error) {
+    console.error('Error saving settings:', error);
+  }
+}
+
+// Apply saved voice settings
+function applySavedSettings() {
+  if (settings.voiceSettings) {
+    if (stabilitySlider) {
+      stabilitySlider.value = settings.voiceSettings.stability;
+      stabilityValue.textContent = settings.voiceSettings.stability;
+      updateSliderColor(stabilitySlider);
+    }
+    
+    if (similaritySlider) {
+      similaritySlider.value = settings.voiceSettings.similarity_boost;
+      similarityValue.textContent = settings.voiceSettings.similarity_boost;
+      updateSliderColor(similaritySlider);
+    }
+    
+    if (styleSlider) {
+      styleSlider.value = settings.voiceSettings.style;
+      styleValue.textContent = settings.voiceSettings.style;
+      updateSliderColor(styleSlider);
+    }
+    
+    if (speedSlider) {
+      speedSlider.value = settings.voiceSettings.speed;
+      speedValue.textContent = settings.voiceSettings.speed;
+      updateSliderColor(speedSlider);
+    }
+  }
+  
+  if (settings.breakDuration && breakDurationInput) {
+    breakDurationInput.value = settings.breakDuration;
+  }
+}
+
+// Preset Management Functions
+function loadPresets() {
+  if (!presetSelect) return;
+  
+  presetSelect.innerHTML = '<option value="">Select a preset...</option>';
+  
+  // Add default presets if no custom presets exist
+  if (!settings.presets || settings.presets.length === 0) {
+    settings.presets = [
+      {
+        name: 'Balanced',
+        values: { stability: 0.5, similarity_boost: 0.75, style: 0, speed: 1.0 }
+      },
+      {
+        name: 'Expressive',
+        values: { stability: 0.3, similarity_boost: 0.65, style: 0.7, speed: 1.0 }
+      },
+      {
+        name: 'Stable',
+        values: { stability: 0.8, similarity_boost: 0.9, style: 0, speed: 1.0 }
+      },
+      {
+        name: 'Fast Speech',
+        values: { stability: 0.5, similarity_boost: 0.75, style: 0, speed: 1.5 }
+      },
+      {
+        name: 'Slow & Clear',
+        values: { stability: 0.7, similarity_boost: 0.8, style: 0, speed: 0.8 }
+      }
+    ];
+    saveSettings();
+  }
+  
+  // Populate preset select
+  settings.presets.forEach((preset, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = preset.name;
+    presetSelect.appendChild(option);
+  });
+}
+
+function savePreset(name) {
+  const preset = {
+    name: name,
+    values: {
+      stability: parseFloat(stabilitySlider.value),
+      similarity_boost: parseFloat(similaritySlider.value),
+      style: parseFloat(styleSlider.value),
+      speed: parseFloat(speedSlider.value)
+    }
+  };
+  
+  // Check if preset with same name exists
+  const existingIndex = settings.presets.findIndex(p => p.name === name);
+  if (existingIndex >= 0) {
+    if (confirm(`Preset "${name}" already exists. Do you want to overwrite it?`)) {
+      settings.presets[existingIndex] = preset;
+    } else {
+      return false;
+    }
+  } else {
+    settings.presets.push(preset);
+  }
+  
+  saveSettings();
+  loadPresets();
+  return true;
+}
+
+function loadPreset(index) {
+  if (index < 0 || index >= settings.presets.length) return;
+  
+  const preset = settings.presets[index];
+  
+  // Apply preset values
+  if (stabilitySlider && preset.values.stability !== undefined) {
+    stabilitySlider.value = preset.values.stability;
+    stabilityValue.textContent = preset.values.stability;
+    updateSliderColor(stabilitySlider);
+  }
+  
+  if (similaritySlider && preset.values.similarity_boost !== undefined) {
+    similaritySlider.value = preset.values.similarity_boost;
+    similarityValue.textContent = preset.values.similarity_boost;
+    updateSliderColor(similaritySlider);
+  }
+  
+  if (styleSlider && preset.values.style !== undefined) {
+    styleSlider.value = preset.values.style;
+    styleValue.textContent = preset.values.style;
+    updateSliderColor(styleSlider);
+  }
+  
+  if (speedSlider && preset.values.speed !== undefined) {
+    speedSlider.value = preset.values.speed;
+    speedValue.textContent = preset.values.speed;
+    updateSliderColor(speedSlider);
+  }
+  
+  // Save as current settings
+  settings.voiceSettings = { ...preset.values };
+  saveSettings();
+  
+  showNotification(`Loaded preset: ${preset.name}`, 'success');
+}
+
+function deletePreset(index) {
+  if (index < 0 || index >= settings.presets.length) return;
+  
+  const preset = settings.presets[index];
+  
+  // Don't allow deletion of default presets
+  const defaultPresets = ['Balanced', 'Expressive', 'Stable', 'Fast Speech', 'Slow & Clear'];
+  if (defaultPresets.includes(preset.name)) {
+    showNotification('Cannot delete default presets', 'warning');
+    return;
+  }
+  
+  if (confirm(`Are you sure you want to delete the preset "${preset.name}"?`)) {
+    settings.presets.splice(index, 1);
+    saveSettings();
+    loadPresets();
+    showNotification(`Deleted preset: ${preset.name}`, 'success');
+  }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+  // Remove any existing notifications
+  const existingNotification = document.querySelector('.notification');
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.textContent = message;
+  
+  // Add to body
+  document.body.appendChild(notification);
+  
+  // Auto-hide after 1 second
+  setTimeout(() => {
+    notification.classList.add('fade-out');
+    setTimeout(() => notification.remove(), 200);
+  }, 1000);
+}
 
 // Function to update slider color based on its value
 function updateSliderColor(slider) {
@@ -83,6 +333,87 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Voice tab switching
+  if (voiceTabBtns.length > 0) {
+    voiceTabBtns.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetTab = button.dataset.voiceTab;
+        
+        voiceTabBtns.forEach(btn => btn.classList.remove('active'));
+        voiceTabContents.forEach(content => content.classList.remove('active'));
+        
+        button.classList.add('active');
+        document.getElementById(targetTab).classList.add('active');
+        
+        // Load content for specific tabs
+        if (targetTab === 'voice-library') {
+          loadVoiceLibrary();
+        }
+      });
+    });
+  }
+
+  // File upload handling for voice cloning
+  let uploadedFiles = [];
+  
+  if (cloneFileUpload) {
+    cloneFileUpload.addEventListener('click', () => {
+      cloneAudioInput.click();
+    });
+    
+    cloneFileUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      cloneFileUpload.classList.add('drag-over');
+    });
+    
+    cloneFileUpload.addEventListener('dragleave', () => {
+      cloneFileUpload.classList.remove('drag-over');
+    });
+    
+    cloneFileUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      cloneFileUpload.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+    
+    cloneAudioInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+  }
+  
+  function handleFiles(files) {
+    for (const file of files) {
+      if (file.type.startsWith('audio/')) {
+        uploadedFiles.push(file);
+        renderFileList();
+      } else {
+        showNotification(`${file.name} is not an audio file`, 'warning');
+      }
+    }
+  }
+  
+  function renderFileList() {
+    cloneFileList.innerHTML = '';
+    uploadedFiles.forEach((file, index) => {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+      
+      const fileName = document.createElement('span');
+      fileName.textContent = file.name;
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'Remove';
+      removeBtn.onclick = () => {
+        uploadedFiles.splice(index, 1);
+        renderFileList();
+      };
+      
+      fileItem.appendChild(fileName);
+      fileItem.appendChild(removeBtn);
+      cloneFileList.appendChild(fileItem);
+    });
+  }
+
   // Initialize sliders with colors
 
   // Initialize all sliders
@@ -92,25 +423,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Slider value updates
+  // Slider value updates with settings persistence
   stabilitySlider.addEventListener('input', () => {
     stabilityValue.textContent = stabilitySlider.value;
     updateSliderColor(stabilitySlider);
+    settings.voiceSettings.stability = parseFloat(stabilitySlider.value);
+    saveSettings();
   });
 
   similaritySlider.addEventListener('input', () => {
     similarityValue.textContent = similaritySlider.value;
     updateSliderColor(similaritySlider);
+    settings.voiceSettings.similarity_boost = parseFloat(similaritySlider.value);
+    saveSettings();
   });
 
   styleSlider.addEventListener('input', () => {
     styleValue.textContent = styleSlider.value;
     updateSliderColor(styleSlider);
+    settings.voiceSettings.style = parseFloat(styleSlider.value);
+    saveSettings();
   });
 
   speedSlider.addEventListener('input', () => {
     speedValue.textContent = speedSlider.value;
     updateSliderColor(speedSlider);
+    settings.voiceSettings.speed = parseFloat(speedSlider.value);
+    saveSettings();
   });
 
   // Add break button functionality
@@ -125,7 +464,69 @@ document.addEventListener('DOMContentLoaded', () => {
       insertBreakTag(textInput, breakDurationInput, addBreakBtn);
     }
   });
+  
+  // Save break duration preference
+  breakDurationInput.addEventListener('change', () => {
+    settings.breakDuration = parseFloat(breakDurationInput.value) || 1.5;
+    saveSettings();
+  });
 
+  // Apply saved settings
+  applySavedSettings();
+  
+  // Load presets
+  loadPresets();
+  
+  // Preset event listeners
+  if (savePresetBtn) {
+    savePresetBtn.addEventListener('click', () => {
+      const name = presetNameInput.value.trim();
+      if (!name) {
+        showNotification('Please enter a preset name', 'warning');
+        presetNameInput.focus();
+        return;
+      }
+      
+      if (savePreset(name)) {
+        presetNameInput.value = '';
+        showNotification(`Saved preset: ${name}`, 'success');
+      }
+    });
+  }
+  
+  // Load preset button removed - preset loads on selection
+  
+  if (deletePresetBtn) {
+    deletePresetBtn.addEventListener('click', () => {
+      const selectedIndex = parseInt(presetSelect.value);
+      if (isNaN(selectedIndex)) {
+        showNotification('Please select a preset to delete', 'warning');
+        return;
+      }
+      
+      deletePreset(selectedIndex);
+    });
+  }
+  
+  if (presetSelect) {
+    presetSelect.addEventListener('change', () => {
+      const selectedIndex = parseInt(presetSelect.value);
+      if (!isNaN(selectedIndex)) {
+        loadPreset(selectedIndex);
+      }
+    });
+  }
+  
+  // Allow pressing Enter in preset name input to save
+  if (presetNameInput) {
+    presetNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        savePresetBtn.click();
+      }
+    });
+  }
+  
   // Load history
   renderHistory();
 });
@@ -136,7 +537,7 @@ function insertBreakTag(inputElement, durationInput, button) {
 
   // Validate the duration
   if (isNaN(duration) || duration <= 0 || duration > 10) {
-    alert('Please enter a valid duration between 0.1 and 10 seconds.');
+    showNotification('Please enter a valid duration between 0.1 and 10 seconds.', 'warning');
     return;
   }
 
@@ -248,12 +649,14 @@ saveApiKeyBtn.addEventListener('click', async () => {
   const keyName = apiKeyNameInput.value.trim();
 
   if (!apiKey) {
-    alert('Please enter an API key');
+    showNotification('Please enter an API key', 'warning');
+    apiKeyInput.focus();
     return;
   }
 
   if (!keyName) {
-    alert('Please enter a name for this API key');
+    showNotification('Please enter a name for this API key', 'warning');
+    apiKeyNameInput.focus();
     return;
   }
 
@@ -261,17 +664,18 @@ saveApiKeyBtn.addEventListener('click', async () => {
     const result = await window.api.saveApiKey({ name: keyName, apiKey });
 
     if (result.success) {
-      alert(`API key "${keyName}" saved successfully`);
+      showNotification(`API key "${keyName}" saved successfully`, 'success');
       apiKeyInput.value = '';
       apiKeyNameInput.value = '';
       loadApiKeys();
       loadVoices();
       loadModels();
     } else {
-      alert(`Error: ${result.error}`);
+      showNotification(result.error || 'Failed to save API key', 'error');
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Error:', error);
+    showNotification(error.message || 'An unexpected error occurred', 'error');
   }
 });
 
@@ -280,7 +684,8 @@ useApiKeyBtn.addEventListener('click', async () => {
   const selectedKeyName = apiKeySelect.value;
 
   if (!selectedKeyName) {
-    alert('Please select an API key');
+    showNotification('Please select an API key', 'warning');
+    apiKeySelect.focus();
     return;
   }
 
@@ -311,10 +716,11 @@ useApiKeyBtn.addEventListener('click', async () => {
       apiKeyStatus.innerHTML = `<span style="color: var(--error-color);">Error: ${result.error}</span>`;
       statusIndicator.classList.remove('active');
       statusText.textContent = 'No API key in use';
-      alert(`Error: ${result.error}`);
+      showNotification(result.error || 'Failed to save API key', 'error');
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Error:', error);
+    showNotification(error.message || 'An unexpected error occurred', 'error');
   }
 });
 
@@ -323,7 +729,8 @@ deleteApiKeyBtn.addEventListener('click', async () => {
   const selectedKeyName = apiKeySelect.value;
 
   if (!selectedKeyName) {
-    alert('Please select an API key to delete');
+    showNotification('Please select an API key to delete', 'warning');
+    apiKeySelect.focus();
     return;
   }
 
@@ -336,7 +743,7 @@ deleteApiKeyBtn.addEventListener('click', async () => {
 
     if (result.success) {
       if (result.deleted) {
-        alert(`API key "${selectedKeyName}" deleted successfully`);
+        showNotification(`API key "${selectedKeyName}" deleted successfully`, 'success');
 
         // Check if the current API key was deleted
         if (statusText.textContent.includes(selectedKeyName)) {
@@ -347,13 +754,14 @@ deleteApiKeyBtn.addEventListener('click', async () => {
 
         loadApiKeys();
       } else {
-        alert(`API key "${selectedKeyName}" not found`);
+        showNotification(`API key "${selectedKeyName}" not found`, 'error');
       }
     } else {
-      alert(`Error: ${result.error}`);
+      showNotification(result.error || 'Failed to save API key', 'error');
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Error:', error);
+    showNotification(error.message || 'An unexpected error occurred', 'error');
   }
 });
 // Load voices from API
@@ -405,6 +813,12 @@ async function loadVoices() {
 
       // Clear and populate main voice select
       voiceSelect.innerHTML = '';
+      
+      // Add event listener to save voice preference
+      voiceSelect.addEventListener('change', () => {
+        settings.lastVoiceId = voiceSelect.value;
+        saveSettings();
+      });
 
       // Safely iterate through voices for main select
       for (let i = 0; i < voices.length; i++) {
@@ -417,8 +831,10 @@ async function loadVoices() {
         }
       }
 
-      // Select the first voice by default if none is selected
-      if (voiceSelect.value === '') {
+      // Restore last selected voice or select the first one
+      if (settings.lastVoiceId && voices.some(v => v.voice_id === settings.lastVoiceId)) {
+        voiceSelect.value = settings.lastVoiceId;
+      } else if (voiceSelect.value === '') {
         voiceSelect.selectedIndex = 0;
       }
 
@@ -501,6 +917,12 @@ async function loadModels() {
 
       // Clear and populate model select
       modelSelect.innerHTML = '';
+      
+      // Add event listener to save model preference
+      modelSelect.addEventListener('change', () => {
+        settings.lastModelId = modelSelect.value;
+        saveSettings();
+      });
 
       // Safely iterate through models
       for (let i = 0; i < models.length; i++) {
@@ -513,8 +935,10 @@ async function loadModels() {
         }
       }
 
-      // Select the first model by default if none is selected
-      if (modelSelect.value === '') {
+      // Restore last selected model or select the first one
+      if (settings.lastModelId && models.some(m => m.model_id === settings.lastModelId)) {
+        modelSelect.value = settings.lastModelId;
+      } else if (modelSelect.value === '') {
         modelSelect.selectedIndex = 0;
       }
     } else {
@@ -559,16 +983,36 @@ function renderVoiceList() {
   voices.forEach(voice => {
     const voiceCard = document.createElement('div');
     voiceCard.className = 'voice-card';
-    voiceCard.innerHTML = `
-      <div class="voice-info">
-        <h3>${voice.name}</h3>
-        <p>${voice.description || 'No description available'}</p>
-        <span class="voice-meta">${voice.category || 'Unknown category'}</span>
-      </div>
-      <div class="voice-card-actions">
-        <button class="use-voice-btn" data-voice-id="${voice.voice_id}">Use</button>
-      </div>
-    `;
+    // Create elements safely to prevent XSS
+    const voiceInfo = document.createElement('div');
+    voiceInfo.className = 'voice-info';
+    
+    const voiceName = document.createElement('h3');
+    voiceName.textContent = voice.name;
+    
+    const voiceDesc = document.createElement('p');
+    voiceDesc.textContent = voice.description || 'No description available';
+    
+    const voiceMeta = document.createElement('span');
+    voiceMeta.className = 'voice-meta';
+    voiceMeta.textContent = voice.category || 'Unknown category';
+    
+    voiceInfo.appendChild(voiceName);
+    voiceInfo.appendChild(voiceDesc);
+    voiceInfo.appendChild(voiceMeta);
+    
+    const voiceActions = document.createElement('div');
+    voiceActions.className = 'voice-card-actions';
+    
+    const useButton = document.createElement('button');
+    useButton.className = 'use-voice-btn';
+    useButton.textContent = 'Use';
+    useButton.dataset.voiceId = voice.voice_id;
+    
+    voiceActions.appendChild(useButton);
+    
+    voiceCard.appendChild(voiceInfo);
+    voiceCard.appendChild(voiceActions);
 
     voiceList.appendChild(voiceCard);
 
@@ -596,31 +1040,68 @@ function renderHistory() {
   history.forEach(item => {
     const historyItem = document.createElement('div');
     historyItem.className = 'history-item';
-    historyItem.innerHTML = `
-      <div class="history-item-header">
-        <h3>${item.voiceName || 'Unknown voice'}</h3>
-        <span>${item.date || 'Unknown date'}</span>
-      </div>
-      <div class="history-item-text">${item.text || 'No text'}</div>
-      <div class="history-item-footer">
-        <div class="audio-status ${item.audioPath ? 'available' : 'missing'}">
-          ${item.audioPath ? 'Audio available' : 'Audio not available'}
-        </div>
-        <div class="history-actions">
-          ${item.audioPath ? `<button class="history-play" data-path="${item.audioPath}">Play</button>` : ''}
-          <button class="history-use" data-id="${item.id}">Use Text</button>
-          <button class="history-delete" data-id="${item.id}">Delete</button>
-        </div>
-      </div>
-    `;
+    // Create elements safely to prevent XSS
+    const header = document.createElement('div');
+    header.className = 'history-item-header';
+    
+    const title = document.createElement('h3');
+    title.textContent = item.voiceName || 'Unknown voice';
+    
+    const date = document.createElement('span');
+    date.textContent = item.date || 'Unknown date';
+    
+    header.appendChild(title);
+    header.appendChild(date);
+    
+    const textDiv = document.createElement('div');
+    textDiv.className = 'history-item-text';
+    textDiv.textContent = item.text || 'No text';
+    
+    const footer = document.createElement('div');
+    footer.className = 'history-item-footer';
+    
+    const audioStatus = document.createElement('div');
+    audioStatus.className = `audio-status ${item.audioPath ? 'available' : 'missing'}`;
+    audioStatus.textContent = item.audioPath ? 'Audio available' : 'Audio not available';
+    
+    const actions = document.createElement('div');
+    actions.className = 'history-actions';
+    
+    if (item.audioPath) {
+      const playButton = document.createElement('button');
+      playButton.className = 'history-play';
+      playButton.textContent = 'Play';
+      playButton.dataset.path = item.audioPath;
+      actions.appendChild(playButton);
+    }
+    
+    const useButton = document.createElement('button');
+    useButton.className = 'history-use';
+    useButton.textContent = 'Use Text';
+    useButton.dataset.id = item.id;
+    
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'history-delete';
+    deleteButton.textContent = 'Delete';
+    deleteButton.dataset.id = item.id;
+    
+    actions.appendChild(useButton);
+    actions.appendChild(deleteButton);
+    
+    footer.appendChild(audioStatus);
+    footer.appendChild(actions);
+    
+    historyItem.appendChild(header);
+    historyItem.appendChild(textDiv);
+    historyItem.appendChild(footer);
 
     historyList.appendChild(historyItem);
 
     // Add event listeners to history item buttons
     if (item.audioPath) {
       const playBtn = historyItem.querySelector('.history-play');
-      playBtn.addEventListener('click', () => {
-        playAudio(item.audioPath);
+      playBtn.addEventListener('click', async () => {
+        await playAudio(item.audioPath);
       });
     }
 
@@ -662,12 +1143,34 @@ clearHistoryBtn.addEventListener('click', () => {
 });
 
 // Play audio
-function playAudio(path) {
-  if (!path) return;
+async function playAudio(path) {
+  if (!path) {
+    showNotification('No audio file to play', 'error');
+    return;
+  }
 
-  currentAudioPath = path;
-  audioPlayer.src = `file://${path}`;
-  audioPlayer.play();
+  try {
+    // Check if file exists first
+    const exists = await window.api.checkFileExists(path);
+    if (!exists) {
+      showNotification('Audio file not found. It may have been moved or deleted.', 'error');
+      return;
+    }
+
+    currentAudioPath = path;
+    audioPlayer.src = `file://${path}`;
+    
+    // Add error handling for audio playback
+    audioPlayer.onerror = () => {
+      showNotification('Failed to play audio file', 'error');
+      audioPlayer.src = '';
+    };
+    
+    await audioPlayer.play();
+  } catch (error) {
+    console.error('Error playing audio:', error);
+    showNotification('Error playing audio file', 'error');
+  }
 }
 
 // Generate audio
@@ -677,17 +1180,20 @@ generateBtn.addEventListener('click', async () => {
   const modelId = modelSelect.value;
 
   if (!text) {
-    alert('Please enter some text to convert to speech');
+    showNotification('Please enter some text to convert to speech', 'warning');
+    textInput.focus();
     return;
   }
 
   if (!voiceId) {
-    alert('Please select a voice');
+    showNotification('Please select a voice', 'warning');
+    voiceSelect.focus();
     return;
   }
 
   if (!modelId) {
-    alert('Please select a model');
+    showNotification('Please select a model', 'warning');
+    modelSelect.focus();
     return;
   }
 
@@ -717,7 +1223,8 @@ generateBtn.addEventListener('click', async () => {
 
     if (result.success) {
       // Play the generated audio
-      playAudio(result.audioPath);
+      await playAudio(result.audioPath);
+      showNotification('Speech generated successfully!', 'success');
 
       // Enable save button
       saveBtn.disabled = false;
@@ -725,10 +1232,11 @@ generateBtn.addEventListener('click', async () => {
       // Add to history
       addToHistory(text, voiceId, modelId, voiceSettings, result.audioPath);
     } else {
-      alert(`Error: ${result.error}`);
+      showNotification(result.error || 'Failed to generate speech', 'error');
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Generate speech error:', error);
+    showNotification(error.message || 'An unexpected error occurred', 'error');
   } finally {
     // Reset button state
     generateBtn.disabled = false;
@@ -739,7 +1247,7 @@ generateBtn.addEventListener('click', async () => {
 // Save audio
 saveBtn.addEventListener('click', async () => {
   if (!currentAudioPath) {
-    alert('No audio to save');
+    showNotification('No audio to save. Generate speech first.', 'warning');
     return;
   }
 
@@ -749,12 +1257,13 @@ saveBtn.addEventListener('click', async () => {
     });
 
     if (result.success) {
-      alert(`Audio saved to: ${result.savedPath}`);
+      showNotification(`Audio saved successfully!`, 'success');
     } else {
-      alert(`Error: ${result.error}`);
+      showNotification(result.error || 'Failed to save audio', 'error');
     }
   } catch (error) {
-    alert(`Error: ${error.message}`);
+    console.error('Save audio error:', error);
+    showNotification(error.message || 'Failed to save audio file', 'error');
   }
 });
 
@@ -980,22 +1489,7 @@ function addToHistory(text, voiceId, modelId, voiceSettings, audioPath) {
   renderHistory();
 }
 
-// Show notification
-function showNotification(message, type = 'info') {
-  const notification = document.createElement('div');
-  notification.className = `notification ${type}`;
-  notification.textContent = message;
-
-  document.body.appendChild(notification);
-
-  // Auto-remove after 3 seconds
-  setTimeout(() => {
-    notification.classList.add('fade-out');
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
-  }, 3000);
-}
+// Duplicate showNotification function removed - using the one defined earlier
 
 // Format time in seconds to MM:SS format
 function formatTime(timeInSeconds) {
@@ -1004,4 +1498,183 @@ function formatTime(timeInSeconds) {
   const minutes = Math.floor(timeInSeconds / 60);
   const seconds = Math.floor(timeInSeconds % 60);
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+// Voice cloning functionality
+if (createCloneBtn) {
+  createCloneBtn.addEventListener('click', async () => {
+    const name = cloneVoiceName.value.trim();
+    const description = cloneVoiceDescription.value.trim();
+    const labels = cloneVoiceLabels.value.trim();
+    
+    if (!name) {
+      showNotification('Please enter a name for your voice clone', 'warning');
+      cloneVoiceName.focus();
+      return;
+    }
+    
+    if (uploadedFiles.length === 0) {
+      showNotification('Please upload at least one audio file', 'warning');
+      return;
+    }
+    
+    createCloneBtn.disabled = true;
+    createCloneBtn.innerHTML = '<span class="loading"></span> Creating voice clone...';
+    
+    try {
+      // Convert files to base64
+      const audioSamples = await Promise.all(uploadedFiles.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({
+            name: file.name,
+            data: reader.result.split(',')[1] // Remove data:audio/...;base64, prefix
+          });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }));
+      
+      const result = await window.api.cloneVoice({
+        name,
+        description,
+        labels: labels ? labels.split(',').map(l => l.trim()) : [],
+        files: audioSamples
+      });
+      
+      if (result.success) {
+        showNotification('Voice clone created successfully!', 'success');
+        // Clear form
+        cloneVoiceName.value = '';
+        cloneVoiceDescription.value = '';
+        cloneVoiceLabels.value = '';
+        uploadedFiles = [];
+        renderFileList();
+        // Refresh voice list
+        loadVoices();
+        // Switch to My Voices tab
+        document.querySelector('.voice-tab-btn[data-voice-tab="my-voices"]').click();
+      } else {
+        showNotification(result.error || 'Failed to create voice clone', 'error');
+      }
+    } catch (error) {
+      console.error('Voice clone error:', error);
+      showNotification(error.message || 'Failed to create voice clone', 'error');
+    } finally {
+      createCloneBtn.disabled = false;
+      createCloneBtn.innerHTML = 'Create Voice Clone';
+    }
+  });
+}
+
+// Load voice library
+async function loadVoiceLibrary() {
+  if (!libraryVoices) return;
+  
+  libraryVoices.innerHTML = '<p>Loading voice library...</p>';
+  
+  try {
+    const result = await window.api.getVoiceLibrary();
+    
+    if (result.success && result.voices) {
+      displayLibraryVoices(result.voices);
+    } else {
+      libraryVoices.innerHTML = '<p>Failed to load voice library</p>';
+    }
+  } catch (error) {
+    console.error('Error loading voice library:', error);
+    libraryVoices.innerHTML = '<p>Error loading voice library</p>';
+  }
+}
+
+// Display library voices
+function displayLibraryVoices(voices) {
+  if (!libraryVoices) return;
+  
+  libraryVoices.innerHTML = '';
+  
+  if (voices.length === 0) {
+    libraryVoices.innerHTML = '<p>No voices found in library</p>';
+    return;
+  }
+  
+  voices.forEach(voice => {
+    const voiceCard = document.createElement('div');
+    voiceCard.className = 'voice-card';
+    
+    const voiceInfo = document.createElement('div');
+    voiceInfo.className = 'voice-info';
+    
+    const voiceName = document.createElement('h3');
+    voiceName.textContent = voice.name;
+    
+    const voiceDesc = document.createElement('p');
+    voiceDesc.textContent = voice.description || 'No description available';
+    
+    const voiceMeta = document.createElement('span');
+    voiceMeta.className = 'voice-meta';
+    voiceMeta.textContent = voice.category || 'Unknown category';
+    
+    voiceInfo.appendChild(voiceName);
+    voiceInfo.appendChild(voiceDesc);
+    voiceInfo.appendChild(voiceMeta);
+    
+    const voiceActions = document.createElement('div');
+    voiceActions.className = 'voice-card-actions';
+    
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add to My Voices';
+    addButton.onclick = async () => {
+      addButton.disabled = true;
+      addButton.textContent = 'Adding...';
+      
+      try {
+        const result = await window.api.addVoiceFromLibrary(voice.voice_id);
+        if (result.success) {
+          showNotification('Voice added successfully!', 'success');
+          loadVoices();
+        } else {
+          showNotification(result.error || 'Failed to add voice', 'error');
+        }
+      } catch (error) {
+        showNotification('Failed to add voice', 'error');
+      } finally {
+        addButton.disabled = false;
+        addButton.textContent = 'Add to My Voices';
+      }
+    };
+    
+    voiceActions.appendChild(addButton);
+    
+    voiceCard.appendChild(voiceInfo);
+    voiceCard.appendChild(voiceActions);
+    libraryVoices.appendChild(voiceCard);
+  });
+}
+
+// Search and filter library voices
+if (librarySearch) {
+  librarySearch.addEventListener('input', filterLibraryVoices);
+}
+
+if (libraryFilterCategory) {
+  libraryFilterCategory.addEventListener('change', filterLibraryVoices);
+}
+
+function filterLibraryVoices() {
+  const searchTerm = librarySearch ? librarySearch.value.toLowerCase() : '';
+  const category = libraryFilterCategory ? libraryFilterCategory.value : '';
+  
+  const voiceCards = libraryVoices.querySelectorAll('.voice-card');
+  
+  voiceCards.forEach(card => {
+    const name = card.querySelector('h3').textContent.toLowerCase();
+    const desc = card.querySelector('p').textContent.toLowerCase();
+    const cardCategory = card.querySelector('.voice-meta').textContent.toLowerCase();
+    
+    const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
+    const matchesCategory = !category || cardCategory.includes(category.toLowerCase());
+    
+    card.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
+  });
 }

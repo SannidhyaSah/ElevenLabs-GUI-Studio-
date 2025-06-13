@@ -19,6 +19,11 @@ try {
       getModels: () => ipcRenderer.invoke('get-models'),
       generateSpeech: (options) => ipcRenderer.invoke('generate-speech', options),
       saveAudio: (options) => ipcRenderer.invoke('save-audio', options),
+      
+      // Voice cloning and library
+      cloneVoice: (data) => ipcRenderer.invoke('clone-voice', data),
+      getVoiceLibrary: () => ipcRenderer.invoke('get-voice-library'),
+      addVoiceFromLibrary: (voiceId) => ipcRenderer.invoke('add-voice-from-library', voiceId),
 
       // File operations
       checkFileExists: (filePath) => ipcRenderer.invoke('check-file-exists', filePath)

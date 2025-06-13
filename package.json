@@ -1,6 +1,6 @@
 {
   "name": "elevenlabs-gui-studio",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A desktop GUI application for ElevenLabs API",
   "main": "main.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/SannidhyaSah/ElevenLabs-GUI-Studio-",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "electron-store": "^8.1.0",
     "elevenlabs": "^1.57.0",
     "express": "^4.18.2",
