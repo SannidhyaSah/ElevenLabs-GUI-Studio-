@@ -61,8 +61,8 @@ function validateApiKey(apiKey) {
     return { valid: false, error: 'Invalid API key format' };
   }
   
-  // Check for valid characters (alphanumeric)
-  if (!/^[a-zA-Z0-9]+$/.test(apiKey)) {
+  // Check for valid characters (alphanumeric, hyphens, underscores)
+  if (!/^[a-zA-Z0-9_-]+$/.test(apiKey)) {
     return { valid: false, error: 'API key contains invalid characters' };
   }
   

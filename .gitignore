@@ -5,6 +5,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
 
 # Dependency directories
 node_modules/
@@ -13,6 +14,9 @@ jspm_packages/
 # Build output
 dist/
 build/
+out/
+release/
+*.unpacked/
 
 # Environment variables
 .env
@@ -28,6 +32,14 @@ Thumbs.db
 # Application data
 data/
 *.mp3
+*.wav
+*.m4a
+*.ogg
+*.flac
+api_keys.json
+user_data/
+sessions/
+cache/
 
 # Editor directories and files
 .idea/
@@ -44,3 +56,19 @@ data/
 **/.history/
 .claude
 CLAUDE.MD
+
+# Electron-specific
+.electron-vue
+.webpack/
+electron-builder.yml
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+.cache/
