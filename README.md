@@ -191,43 +191,9 @@ This is an unofficial application and is not affiliated with ElevenLabs. You mus
 
 ## Changelog
 
-### Version 3.0.0 (2025)
-- **Optimized Page Layouts**: Eliminated useless empty space across all pages
-  - Reduced padding and margins for better space utilization
-  - Improved responsive grid layouts for voice lists and library
-  - Better alignment and spacing consistency
-  - Optimized form layouts in Voice Management
-  - Streamlined Settings and About pages
-- **Enhanced UI/UX**: Multiple refinements for better user experience
-  - Improved visual hierarchy
-  - Better content density without feeling cramped
-  - More efficient use of screen real estate
+For detailed version history and release notes, see [`CHANGELOG.md`](CHANGELOG.md).
 
-### Version 2.0.0 (2025)
-- **Voice Cloning Feature**: Added complete voice cloning functionality
-  - Upload multiple audio samples
-  - Create custom voice clones
-  - Manage voice labels and descriptions
-- **Preset Management System**: Save and load voice parameter combinations
-  - Default presets included (Balanced, Expressive, Stable, Fast Speech, Slow & Clear)
-  - Create custom presets
-  - Delete unwanted presets
-- **Voice Library Integration**: Browse and search available voices
-- **Major UI Overhaul**: Complete redesign with modern dark theme
-- **Performance Optimization**: Removed heavy effects for smoother operation
-- **Improved Visibility**: Enhanced slider tracks and controls
-- **Better Spacing**: Fixed button overlaps and improved layout
-- **Color Scheme Update**: Changed from purple to professional gray (#23272e)
-- **Notification System**: Reduced duration to 1 second for better UX
-- **Preset Management**: Improved preset selector to prevent overflow
-- **Responsive Design**: Better adaptation to different screen sizes
-
-### Version 1.0.0 (Initial Release)
-- Basic text-to-speech functionality
-- Voice and model selection
-- Parameter controls
-- History tracking
-- API key management
+**Latest Version: 3.0.0** - Professional installer configuration, optimized layouts, enhanced UI/UX
 
 ## License
 
