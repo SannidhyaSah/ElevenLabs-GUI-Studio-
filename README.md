@@ -1,10 +1,10 @@
-# ElevenLabs GUI Studio v2.0
+# ElevenLabs GUI Studio v3.0
 
 A modern, user-friendly desktop application for interacting with the ElevenLabs text-to-speech API.
 
 ![ElevenLabs GUI Studio Screenshot](assets/screenshot.png)
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 
@@ -186,6 +186,18 @@ Created by [@SannidhyaSah](https://github.com/SannidhyaSah)
 This is an unofficial application and is not affiliated with ElevenLabs. You must have a valid ElevenLabs API key to use this application. All API usage is subject to ElevenLabs' terms of service.
 
 ## Changelog
+
+### Version 3.0.0 (2025)
+- **Optimized Page Layouts**: Eliminated useless empty space across all pages
+  - Reduced padding and margins for better space utilization
+  - Improved responsive grid layouts for voice lists and library
+  - Better alignment and spacing consistency
+  - Optimized form layouts in Voice Management
+  - Streamlined Settings and About pages
+- **Enhanced UI/UX**: Multiple refinements for better user experience
+  - Improved visual hierarchy
+  - Better content density without feeling cramped
+  - More efficient use of screen real estate
 
 ### Version 2.0.0 (2025)
 - **Voice Cloning Feature**: Added complete voice cloning functionality

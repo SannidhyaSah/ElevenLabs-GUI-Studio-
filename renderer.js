@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('API is not available in window object');
   }
 
-  // Tab switching
+  // Tab switching (also updates compact workstation title)
   tabButtons.forEach(button => {
     button.addEventListener('click', () => {
       tabButtons.forEach(btn => btn.classList.remove('active'));
@@ -330,8 +330,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
       button.classList.add('active');
       document.getElementById(button.dataset.tab).classList.add('active');
+
+      const pageTitleEl = document.getElementById('page-title');
+      if (pageTitleEl) {
+        const label = (button.querySelector('.nav-label')?.textContent || button.textContent || 'Workstation').trim();
+        pageTitleEl.textContent = label;
+      }
     });
   });
+
+  // Initialize page title from current active tab (workstation-style)
+  const activeTabBtn = document.querySelector('.tab-button.active');
+  if (activeTabBtn) {
+    const pageTitleEl = document.getElementById('page-title');
+    if (pageTitleEl) {
+      const label = (activeTabBtn.querySelector('.nav-label')?.textContent || activeTabBtn.textContent || 'Workstation').trim();
+      pageTitleEl.textContent = label;
+    }
+  }
 
   // Voice tab switching
   if (voiceTabBtns.length > 0) {
@@ -1021,7 +1037,7 @@ function renderVoiceList() {
     useVoiceBtn.addEventListener('click', () => {
       voiceSelect.value = voice.voice_id;
       // Switch to the Text to Speech tab
-      document.querySelector('.tab-button[data-tab="tts"]').click();
+      document.querySelector('.tab-button[data-tab="text-to-speech"]').click();
     });
   });
 }
@@ -1115,7 +1131,7 @@ function renderHistory() {
         modelSelect.value = item.modelId;
       }
       // Switch to the Text to Speech tab
-      document.querySelector('.tab-button[data-tab="tts"]').click();
+      document.querySelector('.tab-button[data-tab="text-to-speech"]').click();
     });
 
     const deleteBtn = historyItem.querySelector('.history-delete');
@@ -1676,5 +1692,140 @@ function filterLibraryVoices() {
     const matchesCategory = !category || cardCategory.includes(category.toLowerCase());
     
     card.style.display = matchesSearch && matchesCategory ? 'block' : 'none';
+  });
+}
+
+// Custom Audio Player Controls
+const customAudioControls = document.getElementById('custom-audio-controls');
+const audioPlayBtn = document.getElementById('audio-play-btn');
+const audioCurrentTime = document.getElementById('audio-current-time');
+const audioDuration = document.getElementById('audio-duration');
+const audioProgressContainer = document.getElementById('audio-progress-container');
+const audioProgressBar = document.getElementById('audio-progress-bar');
+const audioVolumeBtn = document.getElementById('audio-volume-btn');
+const audioVolumeSlider = document.getElementById('audio-volume-slider');
+
+// Show/hide custom controls
+audioPlayer.addEventListener('loadedmetadata', () => {
+  if (customAudioControls) {
+    customAudioControls.style.display = 'flex';
+    audioDuration.textContent = formatTime(audioPlayer.duration);
+  }
+  playBtn.disabled = false;
+});
+
+// Play/Pause button
+if (audioPlayBtn) {
+  audioPlayBtn.addEventListener('click', () => {
+    if (audioPlayer.paused) {
+      audioPlayer.play();
+    } else {
+      audioPlayer.pause();
+    }
+  });
+}
+
+// Update play/pause icon
+audioPlayer.addEventListener('play', () => {
+  const playIcon = audioPlayBtn.querySelector('.play-icon');
+  const pauseIcon = audioPlayBtn.querySelector('.pause-icon');
+  if (playIcon && pauseIcon) {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = 'block';
+  }
+});
+
+audioPlayer.addEventListener('pause', () => {
+  const playIcon = audioPlayBtn.querySelector('.play-icon');
+  const pauseIcon = audioPlayBtn.querySelector('.pause-icon');
+  if (playIcon && pauseIcon) {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+  }
+});
+
+// Update progress bar and time
+audioPlayer.addEventListener('timeupdate', () => {
+  if (audioPlayer.duration) {
+    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    audioProgressBar.style.width = progress + '%';
+    audioCurrentTime.textContent = formatTime(audioPlayer.currentTime);
+  }
+});
+
+// Seek functionality
+if (audioProgressContainer) {
+  audioProgressContainer.addEventListener('click', (e) => {
+    const rect = audioProgressContainer.getBoundingClientRect();
+    const percent = (e.clientX - rect.left) / rect.width;
+    audioPlayer.currentTime = percent * audioPlayer.duration;
+  });
+}
+
+// Volume control
+if (audioVolumeSlider) {
+  audioVolumeSlider.addEventListener('input', (e) => {
+    audioPlayer.volume = e.target.value / 100;
+  });
+}
+
+// Volume button (mute/unmute)
+if (audioVolumeBtn) {
+  audioVolumeBtn.addEventListener('click', () => {
+    if (audioPlayer.volume > 0) {
+      audioPlayer.volume = 0;
+      audioVolumeSlider.value = 0;
+    } else {
+      audioPlayer.volume = 1;
+      audioVolumeSlider.value = 100;
+    }
+  });
+}
+
+// Reset on audio end
+audioPlayer.addEventListener('ended', () => {
+  audioProgressBar.style.width = '0%';
+  audioCurrentTime.textContent = '0:00';
+  const playIcon = audioPlayBtn.querySelector('.play-icon');
+  const pauseIcon = audioPlayBtn.querySelector('.pause-icon');
+  if (playIcon && pauseIcon) {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+  }
+});
+
+// Collapsible Dock Functionality
+const parametersDock = document.getElementById('parameters-dock');
+const dockHeader = document.getElementById('dock-header');
+const dockToggleBtn = document.getElementById('dock-toggle-btn');
+
+// Load dock state from localStorage
+const dockState = localStorage.getItem('dockCollapsed');
+if (dockState === 'true') {
+  parametersDock.classList.add('collapsed');
+}
+
+// Toggle dock on header click
+if (dockHeader) {
+  dockHeader.addEventListener('click', () => {
+    parametersDock.classList.toggle('collapsed');
+    
+    // Save state to localStorage
+    const isCollapsed = parametersDock.classList.contains('collapsed');
+    localStorage.setItem('dockCollapsed', isCollapsed);
+  });
+}
+
+// Also allow toggle button to work independently
+if (dockToggleBtn) {
+  dockToggleBtn.addEventListener('click', (e) => {
+    // Prevent double-triggering from header click
+    e.stopPropagation();
+    
+    parametersDock.classList.toggle('collapsed');
+    
+    // Save state to localStorage
+    const isCollapsed = parametersDock.classList.contains('collapsed');
+    localStorage.setItem('dockCollapsed', isCollapsed);
   });
 }

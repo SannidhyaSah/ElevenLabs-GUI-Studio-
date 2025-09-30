@@ -7,141 +7,250 @@
   <link rel="stylesheet" href="styles-optimized.css">
 </head>
 <body>
-  <div class="app-container">
-    <header class="app-header">
-      <h1>ElevenLabs GUI Studio</h1>
-      <div class="current-api-status" id="current-api-status">
-        <span class="status-indicator"></span>
-        <span class="status-text">No API key in use</span>
+  <!-- Inline SVG sprite for workstation icons -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden">
+    <!-- sliders (Playground) -->
+    <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 4h6"/><path d="M4 4h6"/><path d="M10 2v4"/><path d="M4 12h6"/><path d="M14 12h6"/><path d="M14 10v4"/><path d="M4 20h6"/><path d="M14 20h6"/><path d="M10 18v4"/>
+    </symbol>
+    <!-- microphone (Voices) -->
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10a7 7 0 0 1-14 0"/><path d="M12 19v3"/>
+    </symbol>
+    <!-- clock (History) -->
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+    </symbol>
+    <!-- lightbulb (Tips) -->
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18h6"/><path d="M10 22h4"/><path d="M2 11a8 8 0 1 1 16 0c0 2.4-1.2 4-3 5.5-.7.6-1 1.2-1 2.5H9c0-1.3-.3-1.9-1-2.5C3.2 15 2 13.4 2 11z"/>
+    </symbol>
+    <!-- settings gear -->
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1v.2a2 2 0 0 1-4 0v-.2a1.7 1.7 0 0 0-.4-1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.87.34l-.06.06A2 2 0 1 1 2.4 17.7l.06-.06A1.7 1.7 0 0 0 3 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1-.4H1.2a2 2 0 0 1 0-4h.2a1.7 1.7 0 0 0 1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06A2 2 0 1 1 5.53 2.4l.06.06A1.7 1.7 0 0 0 7 3c.6 0 1.1-.2 1.5-.6.3-.25.5-.6.6-1v-.2a2 2 0 0 1 4 0v.2c.1.4.3.75.6 1 .4.4.9.6 1.5.6a1.7 1.7 0 0 0 1.87-.34l.06-.06A2 2 0 1 1 21.6 6.3l-.06.06c-.5.5-.7 1.2-.6 1.87 0 .6.2 1.1.6 1.5.25.3.6.5 1 .6h.2a2 2 0 0 1 0 4h-.2c-.4.1-.75.3-1 .6-.4.4-.6.9-.6 1.5z"/>
+    </symbol>
+    <!-- info -->
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/>
+    </symbol>
+    <!-- book (Docs) -->
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4v15.5A2.5 2.5 0 0 0 6.5 22H20V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/>
+    </symbol>
+    <!-- chevron up/down for dock -->
+    <symbol id="i-chevron-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"/>
+    </symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </symbol>
+  </svg>
+
+  <div class="app-container layout-dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-brand" title="ElevenLabs GUI Studio">
+        <img src="assets/logo-11labsgui.png" alt="ElevenLabs GUI Studio" class="brand-logo" />
       </div>
-    </header>
+      <nav class="sidebar-nav">
+        <button class="nav-item tab-button active" data-tab="text-to-speech" title="Playground">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-sliders"/></svg>
+          <span class="nav-label">Playground</span>
+        </button>
+        <button class="nav-item tab-button" data-tab="voice-management" title="Voice Management">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-mic"/></svg>
+          <span class="nav-label">Voices</span>
+        </button>
+        <button class="nav-item tab-button" data-tab="history" title="History">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-clock"/></svg>
+          <span class="nav-label">History</span>
+        </button>
+        <button class="nav-item tab-button" data-tab="tips" title="Tips & Tricks">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-bulb"/></svg>
+          <span class="nav-label">Tips</span>
+        </button>
+        <button class="nav-item tab-button" data-tab="settings" title="Settings">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-gear"/></svg>
+          <span class="nav-label">Settings</span>
+        </button>
+        <button class="nav-item tab-button" data-tab="about" title="About">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-info"/></svg>
+          <span class="nav-label">About</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="https://elevenlabs.io/docs" class="nav-item ghost" target="_blank" title="Docs" aria-label="Documentation">
+          <svg class="icon nav-icon" aria-hidden="true"><use href="#i-book"/></svg>
+        </a>
+      </div>
+    </aside>
 
-    <div class="tabs">
-      <button class="tab-button active" data-tab="text-to-speech">Playground</button>
-      <button class="tab-button" data-tab="voice-management">Voice Management</button>
-      <button class="tab-button" data-tab="history">History</button>
-      <button class="tab-button" data-tab="tips">Tips & Tricks</button>
-      <button class="tab-button" data-tab="settings">Settings</button>
-      <button class="tab-button" data-tab="about">About</button>
-    </div>
+    <main class="content">
+      <div class="topbar">
+        <h1 class="page-title" id="page-title">Playground</h1>
+        <div class="current-api-status" id="current-api-status">
+          <span class="status-indicator"></span>
+          <span class="status-text">No API key in use</span>
+        </div>
+      </div>
 
-    <div class="tab-content">
+      <div class="tab-content">
       <!-- Playground Tab -->
       <div class="tab-pane active" id="text-to-speech">
         <div class="tts-container">
-          <div class="tts-controls">
-            <div class="control-group">
-              <label for="voice-select">Voice:</label>
-              <div class="select-with-action">
-                <select id="voice-select">
-                  <option value="">Loading voices...</option>
-                </select>
-                <button id="refresh-voices-select-btn" class="small-action-btn" title="Refresh Voices">
-                  <i class="refresh-icon"></i>
-                </button>
+          <div class="tts-main-area">
+            <div class="tts-input">
+              <div class="text-input-container">
+                <textarea id="text-input" placeholder="Enter text to convert to speech..."></textarea>
               </div>
-            </div>
 
-            <div class="control-group">
-              <label for="model-select">Model:</label>
-              <div class="select-with-action">
-                <select id="model-select">
-                  <option value="">Loading models...</option>
-                </select>
-                <button id="refresh-models-btn" class="small-action-btn" title="Refresh Models">
-                  <i class="refresh-icon"></i>
-                </button>
-              </div>
-            </div>
+              <div class="input-actions-row">
+                <div class="text-tools">
+                  <div class="break-tool">
+                    <label for="break-duration">Add Pause:</label>
+                    <div class="break-input-group">
+                      <input type="number" id="break-duration" min="0.1" max="10" step="0.1" value="1.0" class="break-duration-input">
+                      <span class="break-unit">s</span>
+                      <button id="add-break-btn" class="icon-btn" title="Insert pause break">
+                        <i class="plus-icon"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-            <div class="voice-parameters">
-              <div class="parameters-header">
-                <h3>Voice Parameters</h3>
-                <div class="button-group">
-                  <button id="test-settings-btn" class="small-btn" title="Test current settings">Test Settings</button>
-                  <button id="reset-settings-btn" class="small-btn" title="Reset to default settings">Reset Settings</button>
+                <button id="new-btn" title="New Generation">New</button>
+
+                <div class="tts-actions">
+                  <button id="generate-btn" class="btn-primary">Generate Speech</button>
+                  <button id="play-btn" disabled>Play</button>
+                  <button id="save-btn" disabled>Save Audio</button>
                 </div>
               </div>
-              
-              <div class="preset-bar">
-                <div class="preset-selector">
-                  <label>Preset:</label>
-                  <select id="preset-select">
-                    <option value="">Select preset...</option>
-                  </select>
-                  <button id="delete-preset-btn" class="icon-btn" title="Delete selected preset">
-                    <i class="delete-icon"></i>
+
+              <div class="audio-player">
+                <audio id="audio-player"></audio>
+                <div class="custom-audio-controls" id="custom-audio-controls" style="display: none;">
+                  <button class="audio-play-btn" id="audio-play-btn">
+                    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                      <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                    </svg>
                   </button>
-                </div>
-                <div class="preset-save">
-                  <input type="text" id="preset-name-input" placeholder="Save as...">
-                  <button id="save-preset-btn" class="icon-btn" title="Save current settings">
-                    <i class="save-icon"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="slider-control">
-                <label for="stability-slider">Stability:</label>
-                <div class="slider-control-container">
-                  <input type="range" id="stability-slider" min="0" max="1" step="0.01" value="0.5">
-                  <span class="slider-value" id="stability-value">0.5</span>
-                </div>
-              </div>
-
-              <div class="slider-control">
-                <label for="similarity-slider">Similarity:</label>
-                <div class="slider-control-container">
-                  <input type="range" id="similarity-slider" min="0" max="1" step="0.01" value="0.75">
-                  <span class="slider-value" id="similarity-value">0.75</span>
-                </div>
-              </div>
-
-              <div class="slider-control">
-                <label for="style-slider">Style Exaggeration:</label>
-                <div class="slider-control-container">
-                  <input type="range" id="style-slider" min="0" max="1" step="0.01" value="0.5">
-                  <span class="slider-value" id="style-value">0.5</span>
-                </div>
-              </div>
-
-              <div class="slider-control">
-                <label for="speed-slider">Speed:</label>
-                <div class="slider-control-container">
-                  <input type="range" id="speed-slider" min="0.5" max="2.0" step="0.01" value="1.0">
-                  <span class="slider-value" id="speed-value">1.0</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="tts-input">
-            <div class="text-input-container">
-              <textarea id="text-input" placeholder="Enter text to convert to speech..."></textarea>
-
-              <div class="text-tools">
-                <div class="break-tool">
-                  <label for="break-duration">Add Pause:</label>
-                  <div class="break-input-group">
-                    <input type="number" id="break-duration" min="0.1" max="10" step="0.1" value="1.0" class="break-duration-input">
-                    <span class="break-unit">s</span>
-                    <button id="add-break-btn" class="icon-btn" title="Insert pause break">
-                      <i class="plus-icon"></i>
+                  <div class="audio-time" id="audio-current-time">0:00</div>
+                  <div class="audio-progress-container" id="audio-progress-container">
+                    <div class="audio-progress-bar" id="audio-progress-bar"></div>
+                  </div>
+                  <div class="audio-time" id="audio-duration">0:00</div>
+                  <div class="audio-volume-container">
+                    <button class="audio-volume-btn" id="audio-volume-btn">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                      </svg>
                     </button>
+                    <input type="range" class="audio-volume-slider" id="audio-volume-slider" min="0" max="100" value="100">
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="tts-actions">
-              <button id="new-btn" class="icon-btn" title="New Generation"><i class="plus-icon"></i>New</button>
-              <button id="generate-btn" class="btn-primary">Generate Speech</button>
-              <button id="play-btn" disabled>Play</button>
-              <button id="save-btn" disabled>Save Audio</button>
-            </div>
+            <div class="voice-selectors">
+              <div class="control-group">
+                <label for="voice-select">Voice:</label>
+                <div class="select-with-action">
+                  <select id="voice-select">
+                    <option value="">Loading voices...</option>
+                  </select>
+                  <button id="refresh-voices-select-btn" class="small-action-btn" title="Refresh Voices">
+                    <i class="refresh-icon"></i>
+                  </button>
+                </div>
+              </div>
 
-            <div class="audio-player">
-              <audio id="audio-player" controls></audio>
+              <div class="control-group">
+                <label for="model-select">Model:</label>
+                <div class="select-with-action">
+                  <select id="model-select">
+                    <option value="">Loading models...</option>
+                  </select>
+                  <button id="refresh-models-btn" class="small-action-btn" title="Refresh Models">
+                    <i class="refresh-icon"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collapsible Dock at Bottom -->
+          <div class="parameters-dock" id="parameters-dock">
+            <div class="dock-header" id="dock-header">
+              <div class="dock-title">
+                <svg class="icon" style="width: 16px; height: 16px;"><use href="#i-sliders"/></svg>
+                <span>Voice Parameters</span>
+              </div>
+              <button class="dock-toggle-btn" id="dock-toggle-btn" title="Toggle parameters panel">
+                <svg class="icon chevron-icon"><use href="#i-chevron-up"/></svg>
+              </button>
+            </div>
+            
+            <div class="dock-content" id="dock-content">
+              <div class="dock-actions">
+                <div class="preset-controls">
+                  <div class="preset-selector">
+                    <label>Preset:</label>
+                    <select id="preset-select">
+                      <option value="">Select preset...</option>
+                    </select>
+                    <button id="delete-preset-btn" class="icon-btn" title="Delete selected preset">
+                      <i class="delete-icon"></i>
+                    </button>
+                  </div>
+                  <div class="preset-save">
+                    <input type="text" id="preset-name-input" placeholder="Save as...">
+                    <button id="save-preset-btn" class="icon-btn" title="Save current settings">
+                      <i class="save-icon"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="button-group">
+                  <button id="test-settings-btn" class="small-btn" title="Test current settings">Test Settings</button>
+                  <button id="reset-settings-btn" class="small-btn" title="Reset to default settings">Reset Settings</button>
+                </div>
+              </div>
+
+              <div class="parameters-grid">
+                <div class="slider-control">
+                  <label for="stability-slider">Stability:</label>
+                  <div class="slider-control-container">
+                    <input type="range" id="stability-slider" min="0" max="1" step="0.01" value="0.5">
+                    <span class="slider-value" id="stability-value">0.5</span>
+                  </div>
+                </div>
+
+                <div class="slider-control">
+                  <label for="similarity-slider">Similarity:</label>
+                  <div class="slider-control-container">
+                    <input type="range" id="similarity-slider" min="0" max="1" step="0.01" value="0.75">
+                    <span class="slider-value" id="similarity-value">0.75</span>
+                  </div>
+                </div>
+
+                <div class="slider-control">
+                  <label for="style-slider">Style Exaggeration:</label>
+                  <div class="slider-control-container">
+                    <input type="range" id="style-slider" min="0" max="1" step="0.01" value="0.5">
+                    <span class="slider-value" id="style-value">0.5</span>
+                  </div>
+                </div>
+
+                <div class="slider-control">
+                  <label for="speed-slider">Speed:</label>
+                  <div class="slider-control-container">
+                    <input type="range" id="speed-slider" min="0.5" max="2.0" step="0.01" value="1.0">
+                    <span class="slider-value" id="speed-value">1.0</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -324,7 +433,7 @@
           <p>A desktop application for interacting with the ElevenLabs API.</p>
 
           <div class="about-info">
-            <p><strong>Version:</strong> 2.0.0</p>
+            <p><strong>Version:</strong> 3.0.0</p>
             <p><strong>Created by:</strong> <a href="https://github.com/SannidhyaSah" target="_blank">@SannidhyaSah</a></p>
             <p><strong>ElevenLabs API:</strong> <a href="https://elevenlabs.io/docs" target="_blank">Documentation</a></p>
           </div>
@@ -336,6 +445,7 @@
         </div>
       </div>
     </div>
+  </main>
   </div>
 
   <script src="renderer.js"></script>
