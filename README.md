@@ -64,13 +64,17 @@ A modern, user-friendly desktop application for interacting with the ElevenLabs 
 
 ## Building
 
-To build the application for your platform:
+To build installers for distribution:
 
 ```
 npm run build
 ```
 
 This will create distributable packages in the `dist` directory.
+
+**For detailed build instructions, troubleshooting, and platform-specific requirements, see [`BUILD.md`](BUILD.md).**
+
+**Note for Windows users:** You may need to enable Developer Mode or run as Administrator. See [`BUILD.md`](BUILD.md) for details.
 
 ## Usage
 

@@ -30,19 +30,131 @@
     "electron-builder": "^24.9.1"
   },
   "build": {
-    "appId": "com.elevenlabs.gui",
+    "appId": "com.elevenlabs.gui.studio",
     "productName": "ElevenLabs GUI Studio",
+    "copyright": "Copyright © 2025 Sannidhya Sah",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "assets"
     },
+    "files": [
+      "**/*",
+      "!**/*.md",
+      "!.gitignore",
+      "!dist/**/*",
+      "!node_modules/**/*"
+    ],
     "win": {
-      "target": "nsis"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/logo-11labsgui.png",
+      "artifactName": "${productName}-${version}-${arch}-Setup.${ext}",
+      "publisherName": "Sannidhya Sah",
+      "sign": null,
+      "signingHashAlgorithms": []
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "ElevenLabs GUI Studio",
+      "installerIcon": "assets/logo-11labsgui.png",
+      "uninstallerIcon": "assets/logo-11labsgui.png",
+      "installerHeaderIcon": "assets/logo-11labsgui.png",
+      "license": "LICENSE",
+      "perMachine": false,
+      "allowElevation": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-Portable.${ext}"
     },
     "mac": {
-      "target": "dmg"
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/logo-11labsgui.png",
+      "category": "public.app-category.productivity",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "assets/logo-11labsgui.png",
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
     },
     "linux": {
-      "target": "AppImage"
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "rpm",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/logo-11labsgui.png",
+      "category": "Audio;AudioVideo;Utility",
+      "artifactName": "${productName}-${version}-${arch}.${ext}",
+      "synopsis": "Desktop GUI for ElevenLabs Text-to-Speech API",
+      "description": "A modern, user-friendly desktop application for interacting with the ElevenLabs text-to-speech API with voice cloning, preset management, and more."
     }
   }
 }
