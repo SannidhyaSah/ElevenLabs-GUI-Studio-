@@ -479,9 +479,9 @@ body::before {
 .control-group select {
   flex: 1;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 22, 28, 0.8);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
   font-size: 13px;
   cursor: pointer;
@@ -495,22 +495,36 @@ body::before {
 }
 
 .control-group select:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 32, 38, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .control-group select:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 32, 38, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+/* Dropdown option elements - dark theme */
+.control-group select option {
+  background: #1a1c24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.control-group select option:hover,
+.control-group select option:checked {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 #preset-select {
   flex: 1;
   min-width: 0;
   padding: 8px 32px 8px 10px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 22, 28, 0.8);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
   font-size: 12px;
   cursor: pointer;
@@ -519,6 +533,30 @@ body::before {
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 14px;
+  transition: var(--transition);
+}
+
+#preset-select:hover {
+  background: rgba(30, 32, 38, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+#preset-select:focus {
+  outline: none;
+  background: rgba(30, 32, 38, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+#preset-select option {
+  background: #1a1c24;
+  color: var(--text-primary);
+  padding: 8px 10px;
+}
+
+#preset-select option:hover,
+#preset-select option:checked {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 #preset-name-input {
@@ -1254,17 +1292,47 @@ audio {
 .api-key-container input,
 .api-key-container select {
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 22, 28, 0.8);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
   font-size: 13px;
+  transition: var(--transition);
+}
+
+.api-key-container select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+
+.api-key-container input:hover,
+.api-key-container select:hover {
+  background: rgba(30, 32, 38, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .api-key-container input:focus,
 .api-key-container select:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 32, 38, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.api-key-container select option {
+  background: #1a1c24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.api-key-container select option:hover,
+.api-key-container select option:checked {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .api-key-actions {
@@ -1513,11 +1581,47 @@ audio {
 .library-filters input,
 .library-filters select {
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(20, 22, 28, 0.8);
   color: var(--text-primary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-sm);
   font-size: 13px;
+  transition: var(--transition);
+}
+
+.library-filters select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+
+.library-filters input:hover,
+.library-filters select:hover {
+  background: rgba(30, 32, 38, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.library-filters input:focus,
+.library-filters select:focus {
+  outline: none;
+  background: rgba(30, 32, 38, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.library-filters select option {
+  background: #1a1c24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.library-filters select option:hover,
+.library-filters select option:checked {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .library-filters input {
