@@ -504,6 +504,38 @@ body::before {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* Dropdown Option Styling - Dark Theme */
+select option {
+  background-color: #1a1625;
+  color: var(--text-primary);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+select option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+select option:focus {
+  background-color: rgba(255, 255, 255, 0.12);
+  outline: none;
+}
+
+select option:checked,
+select option:active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+select option:disabled {
+  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
+}
+
 #preset-select {
   flex: 1;
   min-width: 0;
