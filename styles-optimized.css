@@ -501,7 +501,33 @@ body::before {
 
 .control-group select:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Dark Theme Dropdown Option Styling - WCAG AA Compliant */
+.control-group select option {
+  background: #1a1a24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.control-group select option:hover,
+.control-group select option:focus {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.control-group select option:checked {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.control-group select option:disabled {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-tertiary);
+  cursor: not-allowed;
 }
 
 #preset-select {
@@ -519,6 +545,36 @@ body::before {
   background-repeat: no-repeat;
   background-position: right 8px center;
   background-size: 14px;
+  transition: var(--transition);
+}
+
+#preset-select:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+#preset-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+#preset-select option {
+  background: #1a1a24;
+  color: var(--text-primary);
+  padding: 8px 10px;
+}
+
+#preset-select option:hover,
+#preset-select option:focus {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+#preset-select option:checked {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 #preset-name-input {
@@ -1264,7 +1320,42 @@ audio {
 .api-key-container input:focus,
 .api-key-container select:focus {
   outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.api-key-container select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 36px;
+  transition: var(--transition);
+}
+
+.api-key-container select:hover {
+  background-color: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+.api-key-container select option {
+  background: #1a1a24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.api-key-container select option:hover,
+.api-key-container select option:focus {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.api-key-container select option:checked {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .api-key-actions {
@@ -1518,6 +1609,48 @@ audio {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm);
   font-size: 13px;
+  transition: var(--transition);
+}
+
+.library-filters input:focus,
+.library-filters select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.library-filters select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 36px;
+}
+
+.library-filters select:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.library-filters select option {
+  background: #1a1a24;
+  color: var(--text-primary);
+  padding: 10px 14px;
+}
+
+.library-filters select option:hover,
+.library-filters select option:focus {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.library-filters select option:checked {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .library-filters input {
