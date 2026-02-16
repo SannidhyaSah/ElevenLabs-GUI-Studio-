@@ -424,17 +424,13 @@ struct PlaygroundView: View {
     }
     
     private func addToWorkstation(_ take: GeneratedTake) {
-        NotificationCenter.default.post(
-            name: .addToWorkstation,
-            object: nil,
-            userInfo: [
-                "audioData": take.audioData,
-                "name": String(text.prefix(40)),
-                "sourceText": text,
-                "voiceName": take.voiceName,
-                "modelName": take.modelName,
-                "duration": take.duration
-            ]
+        appState.addToWorkstation(
+            audioData: take.audioData,
+            name: String(text.prefix(40)),
+            sourceText: text,
+            voiceName: take.voiceName,
+            modelName: take.modelName,
+            duration: take.duration
         )
     }
     

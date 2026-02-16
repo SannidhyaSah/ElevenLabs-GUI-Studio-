@@ -233,8 +233,11 @@ struct WorkstationView: View {
             contentType: .audio,
             defaultFilename: "\(selectedProject?.name ?? "export").mp3"
         ) { _ in }
-        .onReceive(NotificationCenter.default.publisher(for: .addToWorkstation)) { notification in
-            handleAddToWorkstation(notification)
+        .onAppear {
+            consumePendingClips()
+        }
+        .onChange(of: appState.pendingWorkstationClips.count) { _, _ in
+            consumePendingClips()
         }
     }
     
@@ -311,15 +314,8 @@ struct WorkstationView: View {
         try? modelContext.save()
     }
     
-    private func handleAddToWorkstation(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let audioData = userInfo["audioData"] as? Data,
-              let name = userInfo["name"] as? String else { return }
-        
-        let sourceText = userInfo["sourceText"] as? String ?? ""
-        let voiceName = userInfo["voiceName"] as? String ?? ""
-        let modelName = userInfo["modelName"] as? String ?? ""
-        let duration = userInfo["duration"] as? TimeInterval ?? 0
+    private func consumePendingClips() {
+        guard !appState.pendingWorkstationClips.isEmpty else { return }
         
         // Create project if none selected
         if selectedProject == nil {
@@ -328,26 +324,28 @@ struct WorkstationView: View {
             } else {
                 let project = WorkstationProject(name: "My Project")
                 modelContext.insert(project)
+                try? modelContext.save()
                 selectedProject = project
             }
         }
         
         guard let project = selectedProject else { return }
         
-        let clip = TimelineClip(
-            name: name,
-            sourceText: sourceText,
-            voiceName: voiceName,
-            modelName: modelName,
-            audioData: audioData,
-            duration: duration
-        )
-        project.appendClip(clip)
-        modelContext.insert(clip)
-        try? modelContext.save()
+        for pending in appState.pendingWorkstationClips {
+            let clip = TimelineClip(
+                name: pending.name,
+                sourceText: pending.sourceText,
+                voiceName: pending.voiceName,
+                modelName: pending.modelName,
+                audioData: pending.audioData,
+                duration: pending.duration
+            )
+            project.appendClip(clip)
+            modelContext.insert(clip)
+        }
         
-        // Switch to workstation
-        appState.selectedTab = .workstation
+        try? modelContext.save()
+        appState.pendingWorkstationClips.removeAll()
     }
 }
 

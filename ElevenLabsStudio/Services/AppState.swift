@@ -34,6 +34,11 @@ final class AppState {
     var currentVoiceSettings = VoiceSettings.balanced
     var selectedOutputFormat: OutputFormat = .mp3_44100_128
     
+    // MARK: - Workstation Clipboard
+    
+    /// Pending clips to add to the workstation. Views check this and consume.
+    var pendingWorkstationClips: [PendingClip] = []
+    
     // MARK: - Navigation
     
     var selectedTab: SidebarTab = .playground
@@ -215,6 +220,34 @@ final class AppState {
         errorMessage = nil
         showError = false
     }
+    
+    // MARK: - Workstation
+    
+    /// Queue a clip to be added to the workstation. Navigates to workstation tab.
+    func addToWorkstation(audioData: Data, name: String, sourceText: String, voiceName: String, modelName: String, duration: TimeInterval) {
+        let clip = PendingClip(
+            audioData: audioData,
+            name: name,
+            sourceText: sourceText,
+            voiceName: voiceName,
+            modelName: modelName,
+            duration: duration
+        )
+        pendingWorkstationClips.append(clip)
+        selectedTab = .workstation
+    }
+}
+
+// MARK: - Pending Clip
+
+struct PendingClip: Identifiable {
+    let id = UUID()
+    let audioData: Data
+    let name: String
+    let sourceText: String
+    let voiceName: String
+    let modelName: String
+    let duration: TimeInterval
 }
 
 // MARK: - Sidebar Tab
