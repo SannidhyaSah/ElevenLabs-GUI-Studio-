@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 // MARK: - History View
 
@@ -15,6 +16,9 @@ struct HistoryView: View {
     @State private var audioService = AudioService()
     @State private var playingItemId: UUID?
     @State private var showClearConfirmation = false
+    @State private var showExportDialog = false
+    @State private var exportData: Data?
+    @State private var exportFilename: String = "elevenlabs-output.mp3"
     
     private var filteredItems: [GenerationHistory] {
         if searchText.isEmpty {
@@ -88,6 +92,7 @@ struct HistoryView: View {
                             item: item,
                             isPlaying: playingItemId == item.id,
                             onPlay: { playItem(item) },
+                            onSave: { saveItem(item) },
                             onUseText: { useText(item) },
                             onDelete: { deleteItem(item) }
                         )
@@ -96,6 +101,12 @@ struct HistoryView: View {
                 .listStyle(.inset)
             }
         }
+        .fileExporter(
+            isPresented: $showExportDialog,
+            document: AudioDocument(data: exportData ?? Data()),
+            contentType: .audio,
+            defaultFilename: exportFilename
+        ) { _ in }
         .confirmationDialog(
             "Clear all history?",
             isPresented: $showClearConfirmation,
@@ -122,6 +133,24 @@ struct HistoryView: View {
             appState.errorMessage = "Failed to play audio: \(error.localizedDescription)"
             appState.showError = true
         }
+    }
+    
+    private func saveItem(_ item: GenerationHistory) {
+        guard let audioData = item.audioData else { return }
+        
+        // Get the output format to determine file extension
+        let outputFormat = OutputFormat(rawValue: item.outputFormat) ?? .mp3_44100_128
+        let fileExtension = outputFormat.fileExtension
+        
+        // Create filename with voice name and timestamp
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let timestamp = dateFormatter.string(from: item.date)
+        let sanitizedVoiceName = item.voiceName.replacingOccurrences(of: " ", with: "-")
+        
+        exportData = audioData
+        exportFilename = "elevenlabs_\(sanitizedVoiceName)_\(timestamp).\(fileExtension)"
+        showExportDialog = true
     }
     
     private func useText(_ item: GenerationHistory) {
@@ -167,6 +196,7 @@ struct HistoryItemRow: View {
     let item: GenerationHistory
     let isPlaying: Bool
     var onPlay: () -> Void
+    var onSave: () -> Void
     var onUseText: () -> Void
     var onDelete: () -> Void
     
@@ -229,6 +259,12 @@ struct HistoryItemRow: View {
                             Label(isPlaying ? "Playing..." : "Play", systemImage: isPlaying ? "pause.fill" : "play.fill")
                         }
                         .controlSize(.small)
+                        
+                        Button(action: onSave) {
+                            Label("Save", systemImage: "square.and.arrow.up")
+                        }
+                        .controlSize(.small)
+                        .help("Download audio file")
                     }
                     
                     Button(action: onUseText) {

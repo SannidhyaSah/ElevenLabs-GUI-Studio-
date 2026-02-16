@@ -23,7 +23,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.elevenlabs.gui.studio
         PRODUCT_NAME: "ElevenLabs Studio"
-        MARKETING_VERSION: "4.0.0"
+        MARKETING_VERSION: "4.1.0"
         CURRENT_PROJECT_VERSION: 1
         INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.utilities"
         INFOPLIST_KEY_CFBundleDisplayName: "ElevenLabs Studio"

@@ -1,11 +1,17 @@
-# ElevenLabs Studio v4.0
+# ElevenLabs Studio v4.1
 
 A native macOS application for interacting with the ElevenLabs text-to-speech API. Built with Swift and SwiftUI.
 
-![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%2015%2B-lightgrey.svg)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
+
+## What's New in v4.1
+
+### Bug Fixes & Improvements
+- **History Download** — Added save/download functionality to the history section, allowing users to download audio files directly from history with the same interface as the playground
+- **UI Polish** — Fixed TextEditor placeholder text overlap issue where cursor would appear over placeholder text, improving visual clarity
 
 ## What's New in v4.0
 
@@ -115,6 +121,10 @@ The Electron-based v3.0 is preserved on the [`legacy/electron`](https://github.c
 ## Attribution
 
 Created by [@SannidhyaSah](https://github.com/SannidhyaSah)
+
+<p align="center">
+  <img src="assets/RooCode-Badge-white.png" alt="Made with Roo Code" width="300">
+</p>
 
 ## Disclaimer
 

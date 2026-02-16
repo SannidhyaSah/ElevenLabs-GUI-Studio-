@@ -16,6 +16,7 @@ struct PlaygroundView: View {
     @State private var selectedOutputFormat: OutputFormat = .mp3_44100_128
     @State private var showParametersPanel = true
     @State private var breakDuration: Double = 1.0
+    @FocusState private var isTextEditorFocused: Bool
     
     // Generation state
     @State private var generateCount: Int = 1  // 1 or 2
@@ -131,6 +132,7 @@ struct PlaygroundView: View {
                             .frame(minHeight: 120, maxHeight: 260)
                             .scrollContentBackground(.hidden)
                             .padding(12)
+                            .focused($isTextEditorFocused)
                             .background {
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                                     .fill(.background)
@@ -141,7 +143,7 @@ struct PlaygroundView: View {
                                     .stroke(.quaternary, lineWidth: 1)
                             )
                             .overlay(alignment: .topLeading) {
-                                if text.isEmpty {
+                                if text.isEmpty && !isTextEditorFocused {
                                     Text("Enter text to convert to speech...")
                                         .foregroundStyle(.tertiary)
                                         .padding(.horizontal, 16)
