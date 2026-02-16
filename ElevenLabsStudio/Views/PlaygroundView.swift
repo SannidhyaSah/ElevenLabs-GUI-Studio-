@@ -219,6 +219,7 @@ struct PlaygroundView: View {
                                     take: take,
                                     label: takes.count > 1 ? "Take \(["A", "B"][index])" : nil,
                                     isSelected: selectedTakeIndex == index,
+                                    autoPlay: index == 0,
                                     onSelect: { selectedTakeIndex = index },
                                     onAddToWorkstation: { addToWorkstation(take) },
                                     onSave: {
@@ -467,6 +468,7 @@ struct TakeView: View {
     let take: GeneratedTake
     let label: String?
     let isSelected: Bool
+    var autoPlay: Bool = true
     var onSelect: () -> Void
     var onAddToWorkstation: () -> Void
     var onSave: () -> Void
@@ -528,8 +530,9 @@ struct TakeView: View {
         )
         .onTapGesture(perform: onSelect)
         .onAppear {
-            // Auto-play the first take
-            try? audioService.play(data: take.audioData)
+            if autoPlay {
+                try? audioService.play(data: take.audioData)
+            }
         }
     }
 }
