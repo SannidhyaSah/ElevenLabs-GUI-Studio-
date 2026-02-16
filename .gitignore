@@ -1,74 +1,48 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-pnpm-debug.log*
-
-# Dependency directories
-node_modules/
-jspm_packages/
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+DerivedData/
+build/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
 
 # Build output
 dist/
-build/
-out/
 release/
-*.unpacked/
 
-# Environment variables
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Logs
+*.log
+
+# Dependencies (if using SPM)
+.build/
+Packages/
+
+# Environment
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# OS specific files
-.DS_Store
-Thumbs.db
-
-# Application data
-data/
-*.mp3
-*.wav
-*.m4a
-*.ogg
-*.flac
-api_keys.json
-user_data/
-sessions/
-cache/
-
-# Editor directories and files
-.idea/
+# Editor
 .vscode/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+.idea/
+*.swp
+*.swo
 
-# History files
-.history/
-.history
-**/.history/
-.claude
-CLAUDE.MD
-
-# Electron-specific
-.electron-vue
-.webpack/
-electron-builder.yml
-
-# Testing
-coverage/
-.nyc_output/
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*~
-.cache/
+# Archives
+*.xcarchive
+*.ipa
+*.dmg

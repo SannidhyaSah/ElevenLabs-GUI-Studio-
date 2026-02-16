@@ -1,0 +1,34 @@
+name: ElevenLabsStudio
+options:
+  bundleIdPrefix: com.elevenlabs.gui
+  deploymentTarget:
+    macOS: "15.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+  groupSortPosition: top
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  ElevenLabsStudio:
+    type: application
+    platform: macOS
+    sources:
+      - ElevenLabsStudio
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elevenlabs.gui.studio
+        PRODUCT_NAME: "ElevenLabs Studio"
+        MARKETING_VERSION: "4.0.0"
+        CURRENT_PROJECT_VERSION: 1
+        INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.utilities"
+        INFOPLIST_KEY_CFBundleDisplayName: "ElevenLabs Studio"
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: ElevenLabsStudio/ElevenLabsStudio.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: ElevenLabsStudio/ElevenLabsStudio.entitlements

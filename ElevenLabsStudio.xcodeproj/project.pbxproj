@@ -1,0 +1,428 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1968D632CD25CA5AD8DDF6DB /* VoicePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA3EB0AE0704C6D3345DDD0 /* VoicePreset.swift */; };
+		1A472672148129EB89D9AD6B /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC4A133B7131F4827A164CF /* KeychainService.swift */; };
+		363BB379BB42A98E3FF8EF65 /* VoiceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54CEE1B570D4C5D91F4227E /* VoiceCard.swift */; };
+		39C97431ED16B34454CF772F /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E334065D3FC0C40790BD654 /* AudioPlayerView.swift */; };
+		3E944A33F2912072DDF3662D /* VoiceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EE1FB54B6AA41071FA921D /* VoiceSettings.swift */; };
+		5B6B440F0F8F8315AE709FF3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */; };
+		66A1533DBBBEB77C514F4B65 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20997E6200A8E3C4492492C /* HistoryView.swift */; };
+		6B61DFA2CADA95846742F430 /* GenerationHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161392C6F7C9AD7BEF4F0E8 /* GenerationHistory.swift */; };
+		7532DCED6C0ADF82D0B7BF12 /* Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7752A59BD803AE70D0C70BA3 /* Voice.swift */; };
+		8F46F2EE50C920553BEE587C /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A31D4361BCE3D92B7FA82CE /* PlaygroundView.swift */; };
+		931986A3D12AC961929C82C7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F218F493B215C68E2567D6F /* ContentView.swift */; };
+		A0755C93DD8D77C218FD1BA1 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC55360CF82C290C272A3A /* AppState.swift */; };
+		B0D16EAB330CEA8A34CC6CAB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 58A0B062CCCE029F79E87DBD /* Assets.xcassets */; };
+		B554A2B3A38AC3F345BF57E4 /* ElevenLabsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C5C3B4457DE4B1B9B5966A /* ElevenLabsAPI.swift */; };
+		B6A278C3FF2AE34320829C0B /* VoiceParameterSliders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002D98FF96501F056793FCC1 /* VoiceParameterSliders.swift */; };
+		C94C6D2F9A653BD1031572F4 /* ElevenLabsStudioApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713A5A386B859F930B2F17F4 /* ElevenLabsStudioApp.swift */; };
+		D7D5B1BE917678F45C6915B4 /* AIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8CEFFB265EE42292FF0229 /* AIModel.swift */; };
+		EA17AF588C9C3D308FC175EB /* VoiceManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37410C4C01783BF7C3BF2BB1 /* VoiceManagementView.swift */; };
+		F88A258FAD73CAB3BFB80E5F /* AudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B7249B954757058D699788C /* AudioService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		002D98FF96501F056793FCC1 /* VoiceParameterSliders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceParameterSliders.swift; sourceTree = "<group>"; };
+		0BC4A133B7131F4827A164CF /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		37410C4C01783BF7C3BF2BB1 /* VoiceManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceManagementView.swift; sourceTree = "<group>"; };
+		3E334065D3FC0C40790BD654 /* AudioPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerView.swift; sourceTree = "<group>"; };
+		58A0B062CCCE029F79E87DBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5F218F493B215C68E2567D6F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		6A31D4361BCE3D92B7FA82CE /* PlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaygroundView.swift; sourceTree = "<group>"; };
+		6C8CEFFB265EE42292FF0229 /* AIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIModel.swift; sourceTree = "<group>"; };
+		713A5A386B859F930B2F17F4 /* ElevenLabsStudioApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsStudioApp.swift; sourceTree = "<group>"; };
+		7752A59BD803AE70D0C70BA3 /* Voice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Voice.swift; sourceTree = "<group>"; };
+		7B7249B954757058D699788C /* AudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioService.swift; sourceTree = "<group>"; };
+		B20997E6200A8E3C4492492C /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		B25A0F62326CB39FB4D40A3B /* ElevenLabsStudio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElevenLabsStudio.entitlements; sourceTree = "<group>"; };
+		C4D7EF266732DF53ED61B4AE /* ElevenLabsStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElevenLabsStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D161392C6F7C9AD7BEF4F0E8 /* GenerationHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationHistory.swift; sourceTree = "<group>"; };
+		D1C5C3B4457DE4B1B9B5966A /* ElevenLabsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsAPI.swift; sourceTree = "<group>"; };
+		D54CEE1B570D4C5D91F4227E /* VoiceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCard.swift; sourceTree = "<group>"; };
+		D6EE1FB54B6AA41071FA921D /* VoiceSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceSettings.swift; sourceTree = "<group>"; };
+		DBA3EB0AE0704C6D3345DDD0 /* VoicePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicePreset.swift; sourceTree = "<group>"; };
+		E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		EFAC55360CF82C290C272A3A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		12E957ED483A78F38088014F /* ElevenLabsStudio */ = {
+			isa = PBXGroup;
+			children = (
+				44E80BE401291A078EE4AC9F /* App */,
+				980DDD2277D8B84FCA748664 /* Components */,
+				13A3228E2C5C3A77E0211272 /* Models */,
+				DA0C3404A95354332C8F89A8 /* Resources */,
+				E06500339550164BCF631F12 /* Services */,
+				8E12DCE1B40ACE4CBE418FB0 /* Views */,
+				B25A0F62326CB39FB4D40A3B /* ElevenLabsStudio.entitlements */,
+			);
+			path = ElevenLabsStudio;
+			sourceTree = "<group>";
+		};
+		13A3228E2C5C3A77E0211272 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6C8CEFFB265EE42292FF0229 /* AIModel.swift */,
+				D161392C6F7C9AD7BEF4F0E8 /* GenerationHistory.swift */,
+				7752A59BD803AE70D0C70BA3 /* Voice.swift */,
+				DBA3EB0AE0704C6D3345DDD0 /* VoicePreset.swift */,
+				D6EE1FB54B6AA41071FA921D /* VoiceSettings.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		44E80BE401291A078EE4AC9F /* App */ = {
+			isa = PBXGroup;
+			children = (
+				5F218F493B215C68E2567D6F /* ContentView.swift */,
+				713A5A386B859F930B2F17F4 /* ElevenLabsStudioApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		8A72F03D89504DB243FDC472 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C4D7EF266732DF53ED61B4AE /* ElevenLabsStudio.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8E12DCE1B40ACE4CBE418FB0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B20997E6200A8E3C4492492C /* HistoryView.swift */,
+				6A31D4361BCE3D92B7FA82CE /* PlaygroundView.swift */,
+				E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */,
+				37410C4C01783BF7C3BF2BB1 /* VoiceManagementView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		980DDD2277D8B84FCA748664 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				3E334065D3FC0C40790BD654 /* AudioPlayerView.swift */,
+				D54CEE1B570D4C5D91F4227E /* VoiceCard.swift */,
+				002D98FF96501F056793FCC1 /* VoiceParameterSliders.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		DA0C3404A95354332C8F89A8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				58A0B062CCCE029F79E87DBD /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E06500339550164BCF631F12 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EFAC55360CF82C290C272A3A /* AppState.swift */,
+				7B7249B954757058D699788C /* AudioService.swift */,
+				D1C5C3B4457DE4B1B9B5966A /* ElevenLabsAPI.swift */,
+				0BC4A133B7131F4827A164CF /* KeychainService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		F504913EA3229EBAE748B5E7 = {
+			isa = PBXGroup;
+			children = (
+				12E957ED483A78F38088014F /* ElevenLabsStudio */,
+				8A72F03D89504DB243FDC472 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E237DB5656E73C989B3F0AC /* ElevenLabsStudio */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9AB79346D6F0A3D67DE7244 /* Build configuration list for PBXNativeTarget "ElevenLabsStudio" */;
+			buildPhases = (
+				D115F2E1E9242669D80E36C3 /* Sources */,
+				69E5588D7E2B90E2DACEFBD5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ElevenLabsStudio;
+			packageProductDependencies = (
+			);
+			productName = ElevenLabsStudio;
+			productReference = C4D7EF266732DF53ED61B4AE /* ElevenLabsStudio.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		784834D269381AA4DD107D21 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					3E237DB5656E73C989B3F0AC = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 7F5106C4F31E01D24502BA3B /* Build configuration list for PBXProject "ElevenLabsStudio" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F504913EA3229EBAE748B5E7;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E237DB5656E73C989B3F0AC /* ElevenLabsStudio */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		69E5588D7E2B90E2DACEFBD5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B0D16EAB330CEA8A34CC6CAB /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D115F2E1E9242669D80E36C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7D5B1BE917678F45C6915B4 /* AIModel.swift in Sources */,
+				A0755C93DD8D77C218FD1BA1 /* AppState.swift in Sources */,
+				39C97431ED16B34454CF772F /* AudioPlayerView.swift in Sources */,
+				F88A258FAD73CAB3BFB80E5F /* AudioService.swift in Sources */,
+				931986A3D12AC961929C82C7 /* ContentView.swift in Sources */,
+				B554A2B3A38AC3F345BF57E4 /* ElevenLabsAPI.swift in Sources */,
+				C94C6D2F9A653BD1031572F4 /* ElevenLabsStudioApp.swift in Sources */,
+				6B61DFA2CADA95846742F430 /* GenerationHistory.swift in Sources */,
+				66A1533DBBBEB77C514F4B65 /* HistoryView.swift in Sources */,
+				1A472672148129EB89D9AD6B /* KeychainService.swift in Sources */,
+				8F46F2EE50C920553BEE587C /* PlaygroundView.swift in Sources */,
+				5B6B440F0F8F8315AE709FF3 /* SettingsView.swift in Sources */,
+				7532DCED6C0ADF82D0B7BF12 /* Voice.swift in Sources */,
+				363BB379BB42A98E3FF8EF65 /* VoiceCard.swift in Sources */,
+				EA17AF588C9C3D308FC175EB /* VoiceManagementView.swift in Sources */,
+				B6A278C3FF2AE34320829C0B /* VoiceParameterSliders.swift in Sources */,
+				1968D632CD25CA5AD8DDF6DB /* VoicePreset.swift in Sources */,
+				3E944A33F2912072DDF3662D /* VoiceSettings.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		123223BB87906C59F925133A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		1B0508FD68D12DC4D524F15D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ElevenLabsStudio/ElevenLabsStudio.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "ElevenLabs Studio";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 4.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elevenlabs.gui.studio;
+				PRODUCT_NAME = "ElevenLabs Studio";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B48166FE5AD36CE2515DDB7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ElevenLabsStudio/ElevenLabsStudio.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "ElevenLabs Studio";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 4.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elevenlabs.gui.studio;
+				PRODUCT_NAME = "ElevenLabs Studio";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BE51A6D06CB9A3A084088840 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F5106C4F31E01D24502BA3B /* Build configuration list for PBXProject "ElevenLabsStudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE51A6D06CB9A3A084088840 /* Debug */,
+				123223BB87906C59F925133A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C9AB79346D6F0A3D67DE7244 /* Build configuration list for PBXNativeTarget "ElevenLabsStudio" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B48166FE5AD36CE2515DDB7F /* Debug */,
+				1B0508FD68D12DC4D524F15D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 784834D269381AA4DD107D21 /* Project object */;
+}
