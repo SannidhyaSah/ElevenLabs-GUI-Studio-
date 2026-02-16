@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 // MARK: - Playground View
 
@@ -13,12 +14,15 @@ struct PlaygroundView: View {
     @State private var selectedModelId: String?
     @State private var voiceSettings = VoiceSettings.balanced
     @State private var selectedOutputFormat: OutputFormat = .mp3_44100_128
-    @State private var audioService = AudioService()
-    @State private var hasGeneratedAudio = false
-    @State private var lastAudioData: Data?
-    @State private var showExportDialog = false
     @State private var showParametersPanel = true
     @State private var breakDuration: Double = 1.0
+    
+    // Generation state
+    @State private var generateCount: Int = 1  // 1 or 2
+    @State private var takes: [GeneratedTake] = []
+    @State private var selectedTakeIndex: Int?
+    @State private var showExportDialog = false
+    @State private var exportData: Data?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +30,6 @@ struct PlaygroundView: View {
                 VStack(spacing: 20) {
                     // Voice & Model selectors
                     HStack(spacing: 12) {
-                        // Voice picker
                         SelectorCard(
                             title: "Voice",
                             icon: "mic.fill",
@@ -41,9 +44,7 @@ struct PlaygroundView: View {
                                 }
                                 .labelsHidden()
                                 
-                                Button(action: {
-                                    Task { await appState.loadVoices() }
-                                }) {
+                                Button(action: { Task { await appState.loadVoices() } }) {
                                     Image(systemName: "arrow.clockwise")
                                         .font(.caption)
                                 }
@@ -53,7 +54,6 @@ struct PlaygroundView: View {
                             }
                         }
                         
-                        // Model picker
                         SelectorCard(
                             title: "Model",
                             icon: "cpu",
@@ -68,9 +68,7 @@ struct PlaygroundView: View {
                                 }
                                 .labelsHidden()
                                 
-                                Button(action: {
-                                    Task { await appState.loadModels() }
-                                }) {
+                                Button(action: { Task { await appState.loadModels() } }) {
                                     Image(systemName: "arrow.clockwise")
                                         .font(.caption)
                                 }
@@ -80,7 +78,6 @@ struct PlaygroundView: View {
                             }
                         }
                         
-                        // Format picker
                         SelectorCard(title: "Format", icon: "waveform") {
                             Picker("", selection: $selectedOutputFormat) {
                                 ForEach(OutputFormat.allCases) { format in
@@ -91,7 +88,7 @@ struct PlaygroundView: View {
                         }
                     }
                     
-                    // Text input area
+                    // Text input
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
                             Label("Text", systemImage: "text.alignleft")
@@ -99,7 +96,6 @@ struct PlaygroundView: View {
                             
                             Spacer()
                             
-                            // Character count
                             Text("\(text.count)")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundStyle(.tertiary)
@@ -132,7 +128,7 @@ struct PlaygroundView: View {
                         
                         TextEditor(text: $text)
                             .font(.body)
-                            .frame(minHeight: 140, maxHeight: 300)
+                            .frame(minHeight: 120, maxHeight: 260)
                             .scrollContentBackground(.hidden)
                             .padding(12)
                             .background {
@@ -157,15 +153,9 @@ struct PlaygroundView: View {
                     
                     // Action bar
                     HStack(spacing: 12) {
-                        Button(action: {
-                            text = ""
-                            hasGeneratedAudio = false
-                            audioService.stop()
-                            lastAudioData = nil
-                        }) {
+                        Button(action: clearAll) {
                             Label("New", systemImage: "doc")
                         }
-                        .controlSize(.regular)
                         .keyboardShortcut("n", modifiers: .command)
                         
                         Spacer()
@@ -176,6 +166,15 @@ struct PlaygroundView: View {
                                 .foregroundStyle(.orange)
                         }
                         
+                        // Generate count picker
+                        Picker("Takes", selection: $generateCount) {
+                            Text("1x").tag(1)
+                            Text("2x").tag(2)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 100)
+                        .help("Number of takes to generate for comparison")
+                        
                         Button(action: generateSpeech) {
                             HStack(spacing: 8) {
                                 if appState.isGenerating {
@@ -184,10 +183,12 @@ struct PlaygroundView: View {
                                 } else {
                                     Image(systemName: "waveform.badge.plus")
                                 }
-                                Text(appState.isGenerating ? "Generating..." : "Generate Speech")
+                                Text(appState.isGenerating
+                                     ? "Generating..."
+                                     : generateCount == 1 ? "Generate" : "Generate 2 Takes")
                                     .fontWeight(.medium)
                             }
-                            .frame(minWidth: 160)
+                            .frame(minWidth: 140)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(Color.accentColor)
@@ -196,12 +197,37 @@ struct PlaygroundView: View {
                         .keyboardShortcut(.return, modifiers: .command)
                     }
                     
-                    // Audio player
-                    if hasGeneratedAudio {
-                        AudioPlayerView(
-                            audioService: audioService,
-                            onSave: { showExportDialog = true }
-                        )
+                    // Generated takes
+                    if !takes.isEmpty {
+                        VStack(spacing: 12) {
+                            if takes.count > 1 {
+                                // A/B comparison header
+                                HStack {
+                                    Image(systemName: "arrow.left.arrow.right")
+                                        .foregroundStyle(Color.accentColor)
+                                    Text("Compare Takes")
+                                        .font(.subheadline.weight(.semibold))
+                                    Text("— pick the best one")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                }
+                            }
+                            
+                            ForEach(Array(takes.enumerated()), id: \.element.id) { index, take in
+                                TakeView(
+                                    take: take,
+                                    label: takes.count > 1 ? "Take \(["A", "B"][index])" : nil,
+                                    isSelected: selectedTakeIndex == index,
+                                    onSelect: { selectedTakeIndex = index },
+                                    onAddToWorkstation: { addToWorkstation(take) },
+                                    onSave: {
+                                        exportData = take.audioData
+                                        showExportDialog = true
+                                    }
+                                )
+                            }
+                        }
                         .transition(.asymmetric(
                             insertion: .push(from: .bottom).combined(with: .opacity),
                             removal: .opacity
@@ -215,7 +241,6 @@ struct PlaygroundView: View {
             VStack(spacing: 0) {
                 Divider()
                 
-                // Panel toggle
                 Button(action: {
                     withAnimation(.spring(duration: 0.3)) {
                         showParametersPanel.toggle()
@@ -251,18 +276,13 @@ struct PlaygroundView: View {
             }
             .background(.bar)
         }
-        .animation(.spring(duration: 0.3), value: hasGeneratedAudio)
+        .animation(.spring(duration: 0.3), value: takes.count)
         .fileExporter(
             isPresented: $showExportDialog,
-            document: AudioDocument(data: lastAudioData ?? Data()),
+            document: AudioDocument(data: exportData ?? Data()),
             contentType: .audio,
             defaultFilename: "elevenlabs-output.\(selectedOutputFormat.fileExtension)"
-        ) { result in
-            if case .failure(let error) = result {
-                appState.errorMessage = error.localizedDescription
-                appState.showError = true
-            }
-        }
+        ) { _ in }
         .onAppear {
             if selectedVoiceId == nil, let first = appState.voices.first {
                 selectedVoiceId = first.voiceId
@@ -281,16 +301,13 @@ struct PlaygroundView: View {
                 selectedModelId = first.modelId
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .newGeneration)) { _ in
-            text = ""
-            hasGeneratedAudio = false
-            audioService.stop()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .generateSpeech)) { _ in
-            generateSpeech()
-        }
+        .onReceive(NotificationCenter.default.publisher(for: .newGeneration)) { _ in clearAll() }
+        .onReceive(NotificationCenter.default.publisher(for: .generateSpeech)) { _ in generateSpeech() }
         .onReceive(NotificationCenter.default.publisher(for: .saveAudio)) { _ in
-            if hasGeneratedAudio { showExportDialog = true }
+            if let take = selectedTake {
+                exportData = take.audioData
+                showExportDialog = true
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .loadFromHistory)) { notification in
             if let userInfo = notification.userInfo {
@@ -301,6 +318,11 @@ struct PlaygroundView: View {
         }
     }
     
+    private var selectedTake: GeneratedTake? {
+        guard let index = selectedTakeIndex, index < takes.count else { return takes.first }
+        return takes[index]
+    }
+    
     // MARK: - Actions
     
     private func generateSpeech() {
@@ -308,36 +330,59 @@ struct PlaygroundView: View {
               let voiceId = selectedVoiceId,
               let modelId = selectedModelId else { return }
         
+        takes = []
+        selectedTakeIndex = nil
+        
         Task {
             do {
-                let audioData = try await appState.generateSpeech(
-                    text: text,
-                    voiceId: voiceId,
-                    modelId: modelId,
-                    voiceSettings: voiceSettings,
-                    outputFormat: selectedOutputFormat
-                )
+                // Generate the requested number of takes
+                for i in 0..<generateCount {
+                    let audioData = try await appState.generateSpeech(
+                        text: text,
+                        voiceId: voiceId,
+                        modelId: modelId,
+                        voiceSettings: voiceSettings,
+                        outputFormat: selectedOutputFormat
+                    )
+                    
+                    // Get duration
+                    var duration: TimeInterval = 0
+                    if let player = try? AVAudioPlayer(data: audioData) {
+                        duration = player.duration
+                    }
+                    
+                    let voiceName = appState.voices.first(where: { $0.voiceId == voiceId })?.name ?? "Unknown"
+                    let modelName = appState.models.first(where: { $0.modelId == modelId })?.name ?? "Unknown"
+                    
+                    let take = GeneratedTake(
+                        audioData: audioData,
+                        duration: duration,
+                        voiceName: voiceName,
+                        modelName: modelName,
+                        label: generateCount > 1 ? "Take \(["A", "B"][i])" : "Generated"
+                    )
+                    
+                    await MainActor.run {
+                        takes.append(take)
+                        if i == 0 { selectedTakeIndex = 0 }
+                    }
+                }
                 
-                lastAudioData = audioData
-                hasGeneratedAudio = true
-                
-                try audioService.play(data: audioData)
-                
-                let voiceName = appState.voices.first(where: { $0.voiceId == voiceId })?.name ?? "Unknown"
-                let modelName = appState.models.first(where: { $0.modelId == modelId })?.name ?? "Unknown"
-                
-                let historyItem = GenerationHistory(
-                    text: text,
-                    voiceId: voiceId,
-                    voiceName: voiceName,
-                    modelId: modelId,
-                    modelName: modelName,
-                    voiceSettings: voiceSettings,
-                    outputFormat: selectedOutputFormat,
-                    audioData: audioData
-                )
-                modelContext.insert(historyItem)
-                try? modelContext.save()
+                // Save to history (first take)
+                if let firstTake = takes.first {
+                    let historyItem = GenerationHistory(
+                        text: text,
+                        voiceId: voiceId,
+                        voiceName: firstTake.voiceName,
+                        modelId: modelId,
+                        modelName: firstTake.modelName,
+                        voiceSettings: voiceSettings,
+                        outputFormat: selectedOutputFormat,
+                        audioData: firstTake.audioData
+                    )
+                    modelContext.insert(historyItem)
+                    try? modelContext.save()
+                }
                 
             } catch {
                 appState.errorMessage = error.localizedDescription
@@ -347,20 +392,29 @@ struct PlaygroundView: View {
     }
     
     private func testSettings() {
-        guard let voiceId = selectedVoiceId,
-              let modelId = selectedModelId else { return }
+        guard let voiceId = selectedVoiceId, let modelId = selectedModelId else { return }
         
         Task {
             do {
                 let audioData = try await appState.generateSpeech(
-                    text: "This is a test of the voice settings. You should hear changes based on the current parameters.",
+                    text: "This is a test of the voice settings.",
                     voiceId: voiceId,
                     modelId: modelId,
                     voiceSettings: voiceSettings
                 )
-                try audioService.play(data: audioData)
-                hasGeneratedAudio = true
-                lastAudioData = audioData
+                var duration: TimeInterval = 0
+                if let player = try? AVAudioPlayer(data: audioData) {
+                    duration = player.duration
+                }
+                let take = GeneratedTake(
+                    audioData: audioData,
+                    duration: duration,
+                    voiceName: "Test",
+                    modelName: "",
+                    label: "Test"
+                )
+                takes = [take]
+                selectedTakeIndex = 0
             } catch {
                 appState.errorMessage = error.localizedDescription
                 appState.showError = true
@@ -368,9 +422,115 @@ struct PlaygroundView: View {
         }
     }
     
+    private func addToWorkstation(_ take: GeneratedTake) {
+        NotificationCenter.default.post(
+            name: .addToWorkstation,
+            object: nil,
+            userInfo: [
+                "audioData": take.audioData,
+                "name": String(text.prefix(40)),
+                "sourceText": text,
+                "voiceName": take.voiceName,
+                "modelName": take.modelName,
+                "duration": take.duration
+            ]
+        )
+    }
+    
+    private func clearAll() {
+        text = ""
+        takes = []
+        selectedTakeIndex = nil
+    }
+    
     private func insertBreakTag() {
         let formatted = String(format: "%.1f", breakDuration)
         text += "<break time=\"\(formatted)s\" />"
+    }
+}
+
+// MARK: - Generated Take
+
+struct GeneratedTake: Identifiable {
+    let id = UUID()
+    let audioData: Data
+    let duration: TimeInterval
+    let voiceName: String
+    let modelName: String
+    let label: String
+}
+
+// MARK: - Take View
+
+struct TakeView: View {
+    
+    let take: GeneratedTake
+    let label: String?
+    let isSelected: Bool
+    var onSelect: () -> Void
+    var onAddToWorkstation: () -> Void
+    var onSave: () -> Void
+    
+    @State private var audioService = AudioService()
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            // Header
+            HStack {
+                if let label {
+                    Text(label)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            isSelected ? Color.accentColor.opacity(0.12) : Color.secondary.opacity(0.08),
+                            in: Capsule()
+                        )
+                }
+                
+                Text(AudioService.formatTime(take.duration))
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                
+                // Action buttons
+                HStack(spacing: 8) {
+                    Button(action: onAddToWorkstation) {
+                        Label("Add to Workstation", systemImage: "waveform.path.badge.plus")
+                            .font(.caption)
+                    }
+                    .controlSize(.small)
+                    .buttonStyle(.bordered)
+                    .help("Add this take to the Workstation timeline")
+                    
+                    Button(action: onSave) {
+                        Label("Save", systemImage: "square.and.arrow.up")
+                            .font(.caption)
+                    }
+                    .controlSize(.small)
+                    .help("Export this take to a file")
+                }
+            }
+            
+            // Audio player
+            AudioPlayerView(audioService: audioService)
+        }
+        .padding(14)
+        .background {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(isSelected ? Color.accentColor.opacity(0.04) : .clear)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(isSelected ? Color.accentColor.opacity(0.3) : Color.gray.opacity(0.2), lineWidth: isSelected ? 1.5 : 0.5)
+        )
+        .onTapGesture(perform: onSelect)
+        .onAppear {
+            // Auto-play the first take
+            try? audioService.play(data: take.audioData)
+        }
     }
 }
 
@@ -413,7 +573,7 @@ struct SelectorCard<Content: View>: View {
     }
 }
 
-// MARK: - Audio Document (for file export)
+// MARK: - Audio Document
 
 import UniformTypeIdentifiers
 

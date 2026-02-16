@@ -221,6 +221,7 @@ final class AppState {
 
 enum SidebarTab: String, CaseIterable, Identifiable {
     case playground = "Playground"
+    case workstation = "Workstation"
     case voices = "Voices"
     case history = "History"
     case settings = "Settings"
@@ -230,6 +231,7 @@ enum SidebarTab: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .playground: return "slider.horizontal.3"
+        case .workstation: return "waveform.path"
         case .voices: return "mic.fill"
         case .history: return "clock.fill"
         case .settings: return "gearshape.fill"
