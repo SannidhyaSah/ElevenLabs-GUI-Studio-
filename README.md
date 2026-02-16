@@ -1,23 +1,18 @@
-# ElevenLabs Studio v4.1
+# ElevenLabs Studio
 
 A native macOS application for interacting with the ElevenLabs text-to-speech API. Built with Swift and SwiftUI.
 
-![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-macOS%2015%2B-lightgrey.svg)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)
 
-## What's New in v4.1
+> **Latest Release:** See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
 
-### Bug Fixes & Improvements
-- **History Download** — Added save/download functionality to the history section, allowing users to download audio files directly from history with the same interface as the playground
-- **UI Polish** — Fixed TextEditor placeholder text overlap issue where cursor would appear over placeholder text, improving visual clarity
+## Why Native?
 
-## What's New in v4.0
+Built as a **native macOS application** using Swift + SwiftUI for optimal performance and system integration.
 
-Complete rewrite as a **native macOS application** using Swift + SwiftUI. No more Electron/Chromium overhead.
-
-| Feature | v3.0 (Electron) | v4.0 (Native) |
+| Metric | Previous (Electron) | Current (Native) |
 |---|---|---|
 | App size | ~200MB | ~5MB |
 | Startup time | 2-4 seconds | Instant |
