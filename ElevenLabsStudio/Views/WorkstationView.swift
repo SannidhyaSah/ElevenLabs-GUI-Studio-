@@ -231,7 +231,7 @@ struct WorkstationView: View {
             isPresented: $showExportDialog,
             document: AudioDocument(data: exportData ?? Data()),
             contentType: .audio,
-            defaultFilename: "\(selectedProject?.name ?? "export").mp3"
+            defaultFilename: "\(selectedProject?.name ?? "export").m4a"
         ) { _ in }
         .onAppear {
             consumePendingClips()
@@ -274,15 +274,107 @@ struct WorkstationView: View {
     }
     
     private func mergeClips(_ clips: [TimelineClip]) async -> Data? {
-        // Simple concatenation of audio data
-        // For a production app, use AVMutableComposition for proper merging
-        var mergedData = Data()
-        for clip in clips {
-            if let audioData = clip.audioData {
-                mergedData.append(audioData)
+        let tempDir = FileManager.default.temporaryDirectory
+        var tempFiles: [URL] = []
+        
+        defer {
+            // Clean up temp files
+            for file in tempFiles {
+                try? FileManager.default.removeItem(at: file)
             }
         }
-        return mergedData.isEmpty ? nil : mergedData
+        
+        // 1. Write each clip's audio data to a temporary file
+        var clipAssets: [(asset: AVURLAsset, trimStart: TimeInterval, trimEnd: TimeInterval, gapAfter: TimeInterval)] = []
+        for (index, clip) in clips.enumerated() {
+            guard let audioData = clip.audioData else { continue }
+            let tempFile = tempDir.appendingPathComponent("clip_\(index)_\(UUID().uuidString).m4a")
+            tempFiles.append(tempFile)
+            do {
+                try audioData.write(to: tempFile)
+            } catch {
+                print("Failed to write temp file for clip \(index): \(error)")
+                continue
+            }
+            let asset = AVURLAsset(url: tempFile)
+            clipAssets.append((asset: asset, trimStart: clip.trimStart, trimEnd: clip.trimEnd, gapAfter: clip.gapAfter))
+        }
+        
+        guard !clipAssets.isEmpty else { return nil }
+        
+        // 2. Create AVMutableComposition with an audio track
+        let composition = AVMutableComposition()
+        guard let compositionTrack = composition.addMutableTrack(
+            withMediaType: .audio,
+            preferredTrackID: kCMPersistentTrackID_Invalid
+        ) else {
+            print("Failed to create composition audio track")
+            return nil
+        }
+        
+        // 3. Insert each clip's audio at the correct time offset
+        var insertionTime = CMTime.zero
+        for entry in clipAssets {
+            do {
+                let duration = try await entry.asset.load(.duration)
+                let assetTracks = try await entry.asset.loadTracks(withMediaType: .audio)
+                guard let assetTrack = assetTracks.first else {
+                    print("No audio track found in asset")
+                    continue
+                }
+                
+                let assetDuration = CMTimeGetSeconds(duration)
+                let clipTrimStart = min(entry.trimStart, assetDuration)
+                let clipTrimEnd = min(entry.trimEnd, assetDuration)
+                let effectiveDuration = max(0, clipTrimEnd - clipTrimStart)
+                
+                let startTime = CMTimeMakeWithSeconds(clipTrimStart, preferredTimescale: 44100)
+                let clipDuration = CMTimeMakeWithSeconds(effectiveDuration, preferredTimescale: 44100)
+                let timeRange = CMTimeRange(start: startTime, duration: clipDuration)
+                
+                try compositionTrack.insertTimeRange(timeRange, of: assetTrack, at: insertionTime)
+                
+                // Advance insertion point by clip duration + gap
+                insertionTime = CMTimeAdd(insertionTime, clipDuration)
+                if entry.gapAfter > 0 {
+                    let gapDuration = CMTimeMakeWithSeconds(entry.gapAfter, preferredTimescale: 44100)
+                    insertionTime = CMTimeAdd(insertionTime, gapDuration)
+                }
+            } catch {
+                print("Failed to insert clip into composition: \(error)")
+                continue
+            }
+        }
+        
+        // 4. Export using AVAssetExportSession to produce a valid M4A file
+        let outputURL = tempDir.appendingPathComponent("merged_\(UUID().uuidString).m4a")
+        tempFiles.append(outputURL)
+        
+        guard let exportSession = AVAssetExportSession(
+            asset: composition,
+            presetName: AVAssetExportPresetAppleM4A
+        ) else {
+            print("Failed to create export session")
+            return nil
+        }
+        
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = .m4a
+        
+        await exportSession.export()
+        
+        guard exportSession.status == .completed else {
+            print("Export failed: \(exportSession.error?.localizedDescription ?? "unknown error")")
+            return nil
+        }
+        
+        // 5. Return the exported file's Data
+        do {
+            return try Data(contentsOf: outputURL)
+        } catch {
+            print("Failed to read exported file: \(error)")
+            return nil
+        }
     }
     
     private func importAudioFiles(_ urls: [URL]) {
