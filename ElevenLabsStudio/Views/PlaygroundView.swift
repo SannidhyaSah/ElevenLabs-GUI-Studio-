@@ -221,7 +221,6 @@ struct PlaygroundView: View {
                                     isSelected: selectedTakeIndex == index,
                                     autoPlay: index == 0,
                                     onSelect: { selectedTakeIndex = index },
-                                    onAddToWorkstation: { addToWorkstation(take) },
                                     onSave: {
                                         exportData = take.audioData
                                         showExportDialog = true
@@ -423,17 +422,6 @@ struct PlaygroundView: View {
         }
     }
     
-    private func addToWorkstation(_ take: GeneratedTake) {
-        appState.addToWorkstation(
-            audioData: take.audioData,
-            name: String(text.prefix(40)),
-            sourceText: text,
-            voiceName: take.voiceName,
-            modelName: take.modelName,
-            duration: take.duration
-        )
-    }
-    
     private func clearAll() {
         text = ""
         takes = []
@@ -466,7 +454,6 @@ struct TakeView: View {
     let isSelected: Bool
     var autoPlay: Bool = true
     var onSelect: () -> Void
-    var onAddToWorkstation: () -> Void
     var onSave: () -> Void
     
     @State private var audioService = AudioService()
@@ -495,14 +482,6 @@ struct TakeView: View {
                 
                 // Action buttons
                 HStack(spacing: 8) {
-                    Button(action: onAddToWorkstation) {
-                        Label("Add to Workstation", systemImage: "waveform.path.badge.plus")
-                            .font(.caption)
-                    }
-                    .controlSize(.small)
-                    .buttonStyle(.bordered)
-                    .help("Add this take to the Workstation timeline")
-                    
                     Button(action: onSave) {
                         Label("Save", systemImage: "square.and.arrow.up")
                             .font(.caption)

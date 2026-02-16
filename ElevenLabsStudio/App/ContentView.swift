@@ -91,8 +91,6 @@ struct ContentView: View {
                 switch appState.selectedTab {
                 case .playground:
                     PlaygroundView()
-                case .workstation:
-                    WorkstationView()
                 case .voices:
                     VoiceManagementView()
                 case .history:

@@ -16,9 +16,7 @@ struct ElevenLabsStudioApp: App {
         }
         .modelContainer(for: [
             GenerationHistory.self,
-            VoicePreset.self,
-            WorkstationProject.self,
-            TimelineClip.self
+            VoicePreset.self
         ])
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified(showsTitle: true))

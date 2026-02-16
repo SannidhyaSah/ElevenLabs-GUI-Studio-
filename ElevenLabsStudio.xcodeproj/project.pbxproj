@@ -13,11 +13,9 @@
 		39C97431ED16B34454CF772F /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E334065D3FC0C40790BD654 /* AudioPlayerView.swift */; };
 		3E944A33F2912072DDF3662D /* VoiceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6EE1FB54B6AA41071FA921D /* VoiceSettings.swift */; };
 		5B6B440F0F8F8315AE709FF3 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */; };
-		5DB0979333109CA6F6937DCD /* WorkstationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9760691D77553AE921073B8 /* WorkstationView.swift */; };
 		66A1533DBBBEB77C514F4B65 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20997E6200A8E3C4492492C /* HistoryView.swift */; };
 		6B61DFA2CADA95846742F430 /* GenerationHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D161392C6F7C9AD7BEF4F0E8 /* GenerationHistory.swift */; };
 		7532DCED6C0ADF82D0B7BF12 /* Voice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7752A59BD803AE70D0C70BA3 /* Voice.swift */; };
-		84796879C16F63560815E6D3 /* WorkstationProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0215177616DAF782997142C /* WorkstationProject.swift */; };
 		8F46F2EE50C920553BEE587C /* PlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A31D4361BCE3D92B7FA82CE /* PlaygroundView.swift */; };
 		931986A3D12AC961929C82C7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F218F493B215C68E2567D6F /* ContentView.swift */; };
 		A0755C93DD8D77C218FD1BA1 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC55360CF82C290C272A3A /* AppState.swift */; };
@@ -45,7 +43,6 @@
 		B20997E6200A8E3C4492492C /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		B25A0F62326CB39FB4D40A3B /* ElevenLabsStudio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElevenLabsStudio.entitlements; sourceTree = "<group>"; };
 		C4D7EF266732DF53ED61B4AE /* ElevenLabsStudio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElevenLabsStudio.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9760691D77553AE921073B8 /* WorkstationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkstationView.swift; sourceTree = "<group>"; };
 		D161392C6F7C9AD7BEF4F0E8 /* GenerationHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationHistory.swift; sourceTree = "<group>"; };
 		D1C5C3B4457DE4B1B9B5966A /* ElevenLabsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsAPI.swift; sourceTree = "<group>"; };
 		D54CEE1B570D4C5D91F4227E /* VoiceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceCard.swift; sourceTree = "<group>"; };
@@ -53,7 +50,6 @@
 		DBA3EB0AE0704C6D3345DDD0 /* VoicePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoicePreset.swift; sourceTree = "<group>"; };
 		E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		EFAC55360CF82C290C272A3A /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
-		F0215177616DAF782997142C /* WorkstationProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkstationProject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -79,7 +75,6 @@
 				7752A59BD803AE70D0C70BA3 /* Voice.swift */,
 				DBA3EB0AE0704C6D3345DDD0 /* VoicePreset.swift */,
 				D6EE1FB54B6AA41071FA921D /* VoiceSettings.swift */,
-				F0215177616DAF782997142C /* WorkstationProject.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -108,7 +103,6 @@
 				6A31D4361BCE3D92B7FA82CE /* PlaygroundView.swift */,
 				E07C4B59CF24D13093EFC2F8 /* SettingsView.swift */,
 				37410C4C01783BF7C3BF2BB1 /* VoiceManagementView.swift */,
-				C9760691D77553AE921073B8 /* WorkstationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -238,8 +232,6 @@
 				B6A278C3FF2AE34320829C0B /* VoiceParameterSliders.swift in Sources */,
 				1968D632CD25CA5AD8DDF6DB /* VoicePreset.swift in Sources */,
 				3E944A33F2912072DDF3662D /* VoiceSettings.swift in Sources */,
-				84796879C16F63560815E6D3 /* WorkstationProject.swift in Sources */,
-				5DB0979333109CA6F6937DCD /* WorkstationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

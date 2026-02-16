@@ -1,6 +1,5 @@
 import SwiftUI
 import SwiftData
-import AVFoundation
 
 // MARK: - History View
 
@@ -90,7 +89,6 @@ struct HistoryView: View {
                             isPlaying: playingItemId == item.id,
                             onPlay: { playItem(item) },
                             onUseText: { useText(item) },
-                            onAddToWorkstation: { addItemToWorkstation(item) },
                             onDelete: { deleteItem(item) }
                         )
                     }
@@ -151,18 +149,6 @@ struct HistoryView: View {
         try? modelContext.save()
     }
     
-    private func addItemToWorkstation(_ item: GenerationHistory) {
-        guard let audioData = item.audioData else { return }
-        appState.addToWorkstation(
-            audioData: audioData,
-            name: String(item.text.prefix(40)),
-            sourceText: item.text,
-            voiceName: item.voiceName,
-            modelName: item.modelName,
-            duration: item.audioData.flatMap { try? AVAudioPlayer(data: $0) }?.duration ?? 0
-        )
-    }
-    
     private func clearAllHistory() {
         audioService.stop()
         playingItemId = nil
@@ -182,7 +168,6 @@ struct HistoryItemRow: View {
     let isPlaying: Bool
     var onPlay: () -> Void
     var onUseText: () -> Void
-    var onAddToWorkstation: () -> Void
     var onDelete: () -> Void
     
     var body: some View {
@@ -242,13 +227,6 @@ struct HistoryItemRow: View {
                     if item.hasAudio {
                         Button(action: onPlay) {
                             Label(isPlaying ? "Playing..." : "Play", systemImage: isPlaying ? "pause.fill" : "play.fill")
-                        }
-                        .controlSize(.small)
-                    }
-                    
-                    if item.hasAudio {
-                        Button(action: onAddToWorkstation) {
-                            Label("Workstation", systemImage: "waveform.path.badge.plus")
                         }
                         .controlSize(.small)
                     }
